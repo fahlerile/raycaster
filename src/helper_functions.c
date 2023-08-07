@@ -187,7 +187,11 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall)
     int y1 = GAME_HEIGHT / 2 - ray_length_screen / 2;
     int y2 = y1 + ray_length_screen;
 
+    SDL_SetRenderDrawColor(renderer, colors[0].r, colors[0].g, colors[0].b, colors[0].a);
+    SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, y1);  // draw ceiling
+    SDL_RenderDrawLine(renderer, x_screen, y2, x_screen, GAME_HEIGHT);  // draw floor
+
     Color color = colors[wall];
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);
+    SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);  // draw wall
 }
