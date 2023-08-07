@@ -4,7 +4,7 @@ My simple raycaster engine written in C.
 
 # TODO
 
-- Shading
-- Collsision
 - Textures
 - Game?
+- Proper ray casting (fix `rays` branch)
+    - Shading

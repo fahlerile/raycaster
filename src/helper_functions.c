@@ -44,23 +44,51 @@ void poll_events()
 
             else if (event.key.keysym.sym == SDLK_w)
             {
-                player.pos.x += cos(to_radians(player.angle)) * PLAYER_SPEED;
-                player.pos.y += sin(to_radians(player.angle)) * PLAYER_SPEED;
+                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+
+                // if not trying to go into the block
+                if (map[(int) (floor(player.pos.y + dy) * MAP_WIDTH + floor(player.pos.x + dx))] == 0)
+                {
+                    player.pos.x += dx;
+                    player.pos.y += dy;
+                }
             }
             else if (event.key.keysym.sym == SDLK_a)
             {
-                player.pos.x += sin(to_radians(player.angle)) * PLAYER_SPEED;
-                player.pos.y -= cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+
+                // if not trying to go into the block
+                if (map[(int) (floor(player.pos.y - dx) * MAP_WIDTH + floor(player.pos.x + dy))] == 0)
+                {
+                    player.pos.x += dy;
+                    player.pos.y -= dx;
+                }
             }
             else if (event.key.keysym.sym == SDLK_s)
             {
-                player.pos.x -= cos(to_radians(player.angle)) * PLAYER_SPEED;
-                player.pos.y -= sin(to_radians(player.angle)) * PLAYER_SPEED;
+                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+
+                // if not trying to go into the block
+                if (map[(int) (floor(player.pos.y - dy) * MAP_WIDTH + floor(player.pos.x - dx))] == 0)
+                {
+                    player.pos.x -= dx;
+                    player.pos.y -= dy;
+                }
             }
             else if (event.key.keysym.sym == SDLK_d)
             {
-                player.pos.x -= sin(to_radians(player.angle)) * PLAYER_SPEED;
-                player.pos.y += cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+
+                // if not trying to go into the block
+                if (map[(int) (floor(player.pos.y + dx) * MAP_WIDTH + floor(player.pos.x - dy))] == 0)
+                {
+                    player.pos.x -= dy;
+                    player.pos.y += dx;
+                }
             }
             else if (event.key.keysym.sym == SDLK_LEFT)
             {
