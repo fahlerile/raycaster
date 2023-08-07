@@ -9,9 +9,8 @@ typedef struct
 
 typedef struct
 {
-    unsigned char red;
-    unsigned char green;
-    unsigned char blue;
-} color;
+    vec2f pos;
+    float angle;
+} Player;
 
 #endif  // #ifndef TYPEDEFS_H
