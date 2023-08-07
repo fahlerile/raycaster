@@ -13,7 +13,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
-Player player = {{3, 3}, 0.0f};
+Player player = {{3, 3}, 270.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     1, 1, 1, 1, 1, 1, 1,
     1, 0, 0, 0, 0, 0, 1,
@@ -44,7 +44,7 @@ void poll_events()
 {
     while (SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+        if (event.type == SDL_QUIT)
             running = false;
 
         else if (event.type == SDL_KEYDOWN)
@@ -149,9 +149,10 @@ void cast_rays()
 
         // calculate ray length
         float ray_length = sqrt(pow(player.pos.x - ray.x, 2) + pow(player.pos.y - ray.y, 2));
-        draw_ray_3d(x, ray_length);
+        float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
+        float adj_length = ray_length * cos(to_radians(alpha));  // fisheye fix
+        draw_ray_3d(x, adj_length);
 
-        // TODO: fix rendering of rays in 2D
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
                            player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
@@ -189,8 +190,6 @@ int main(int argc, char **argv)
         draw_map();
         draw_player();
         cast_rays();
-
-        printf("%f\n", player.angle);
 
         SDL_RenderPresent(renderer);
     }
