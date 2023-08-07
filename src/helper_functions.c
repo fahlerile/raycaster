@@ -12,6 +12,7 @@ extern SDL_Renderer* renderer;
 extern SDL_Event event;
 extern Player player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
+extern const Color colors[];
 
 #define to_radians(x) x * (PI / 180)
 
@@ -84,11 +85,8 @@ void draw_map()
         for (int j = 0; j < MAP_WIDTH; j++)
         {
             int pixel = map[j * MAP_HEIGHT + i];
-            // set color depending on what number that is
-            if (pixel == 0)
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            else if (pixel == 1)
-                SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            Color color = colors[pixel];
+            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
             // draw square
             SDL_Rect square = {
@@ -127,7 +125,7 @@ void cast_rays()
         float sin_ray_angle = sin(ray_angle_rad) / RAYCASTING_PRECISION;
         float cos_ray_angle = cos(ray_angle_rad) / RAYCASTING_PRECISION;
 
-        int wall = 0;
+        unsigned int wall = 0;
         while (wall == 0)
         {
             ray.x += cos_ray_angle;
@@ -140,9 +138,9 @@ void cast_rays()
         float ray_length = sqrt(pow(player.pos.x - ray.x, 2) + pow(player.pos.y - ray.y, 2));
         float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
         float adj_length = ray_length * cos(to_radians(alpha));  // fisheye fix
-        draw_ray_3d(x, adj_length);
+        draw_ray_3d(x, adj_length, wall);
 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
                            player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
                            player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
@@ -153,7 +151,7 @@ void cast_rays()
     }
 }
 
-void draw_ray_3d(int x, float ray_length)
+void draw_ray_3d(int x, float ray_length, unsigned int wall)
 {
     int x_screen = x + WINDOW_WIDTH / 2;
     int ray_length_screen = SCALE / ray_length;
@@ -161,6 +159,7 @@ void draw_ray_3d(int x, float ray_length)
     int y1 = GAME_HEIGHT / 2 - ray_length_screen / 2;
     int y2 = y1 + ray_length_screen;
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    Color color = colors[wall];
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);
 }

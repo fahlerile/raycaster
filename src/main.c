@@ -14,6 +14,9 @@ Player player = {{3, 3}, 0.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "map.txt"
 };
+const Color colors[] = {
+    #include "colors.txt"
+};
 
 int main(int argc, char **argv)
 {

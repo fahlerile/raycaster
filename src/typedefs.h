@@ -13,4 +13,12 @@ typedef struct
     float angle;
 } Player;
 
+typedef struct
+{
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;
+} Color;
+
 #endif  // #ifndef TYPEDEFS_H
