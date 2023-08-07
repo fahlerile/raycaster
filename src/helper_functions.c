@@ -48,8 +48,8 @@ void poll_events()
             }
             else if (event.key.keysym.sym == SDLK_a)
             {
-                player.pos.x += cos(to_radians(player.angle - 90.0f)) * PLAYER_SPEED;
-                player.pos.y += sin(to_radians(player.angle - 90.0f)) * PLAYER_SPEED;
+                player.pos.x += sin(to_radians(player.angle)) * PLAYER_SPEED;
+                player.pos.y -= cos(to_radians(player.angle)) * PLAYER_SPEED;
             }
             else if (event.key.keysym.sym == SDLK_s)
             {
@@ -58,8 +58,8 @@ void poll_events()
             }
             else if (event.key.keysym.sym == SDLK_d)
             {
-                player.pos.x += cos(to_radians(player.angle + 90.0f)) * PLAYER_SPEED;
-                player.pos.y += sin(to_radians(player.angle + 90.0f)) * PLAYER_SPEED;
+                player.pos.x -= sin(to_radians(player.angle)) * PLAYER_SPEED;
+                player.pos.y += cos(to_radians(player.angle)) * PLAYER_SPEED;
             }
             else if (event.key.keysym.sym == SDLK_LEFT)
             {
