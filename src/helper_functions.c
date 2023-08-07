@@ -122,14 +122,14 @@ void cast_rays()
     {
         vec2f ray = player.pos;
         float ray_angle_rad = to_radians(ray_angle);
-        float sin_ray_angle = sin(ray_angle_rad) / RAYCASTING_PRECISION;
-        float cos_ray_angle = cos(ray_angle_rad) / RAYCASTING_PRECISION;
+        float ray_dx = cos(ray_angle_rad) / RAYCASTING_PRECISION;
+        float ray_dy = sin(ray_angle_rad) / RAYCASTING_PRECISION;
 
         unsigned int wall = 0;
         while (wall == 0)
         {
-            ray.x += cos_ray_angle;
-            ray.y += sin_ray_angle;
+            ray.x += ray_dx;
+            ray.y += ray_dy;
 
             wall = map[(int) (floor(ray.y) * MAP_WIDTH + floor(ray.x))];
         }

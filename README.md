@@ -4,7 +4,7 @@ My simple raycaster engine written in C.
 
 # TODO
 
-- Colors
-- Some testing
+- Shading
 - Collsision
 - Textures
+- Game?
