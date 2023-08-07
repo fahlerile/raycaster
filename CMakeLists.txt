@@ -4,6 +4,7 @@ project(raycaster)
 set(
   SOURCES
   src/main.c
+  src/helper_functions.c
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin
