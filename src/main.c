@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdbool.h>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -10,7 +11,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
-Player player = {{0.5f, 0.5f}, 60.0f};
+Player player = {{0.5f, 0.5f}, 90.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "map.txt"
 };
@@ -34,6 +35,8 @@ int main(int argc, char **argv)
         cast_rays();
 
         SDL_RenderPresent(renderer);
+
+        printf("%f\n", player.angle);
     }
 
     SDL_DestroyRenderer(renderer);

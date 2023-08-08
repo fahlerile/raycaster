@@ -93,18 +93,18 @@ void poll_events()
             //         player.pos.y += dx;
             //     }
             // }
-            // else if (event.key.keysym.sym == SDLK_LEFT)
-            // {
-            //     player.angle -= PLAYER_ANGLE_DELTA;
-            //     if (player.angle <= 0.0f)
-            //         player.angle = 360.0f;
-            // }
-            // else if (event.key.keysym.sym == SDLK_RIGHT)
-            // {
-            //     player.angle += PLAYER_ANGLE_DELTA;
-            //     if (player.angle >= 360.0f)
-            //         player.angle = 0.0f;
-            // }
+            else if (event.key.keysym.sym == SDLK_LEFT)
+            {
+                player.angle -= PLAYER_ANGLE_DELTA;
+                if (player.angle <= 0.0f)
+                    player.angle = 360.0f;
+            }
+            else if (event.key.keysym.sym == SDLK_RIGHT)
+            {
+                player.angle += PLAYER_ANGLE_DELTA;
+                if (player.angle >= 360.0f)
+                    player.angle = 0.0f;
+            }
         }
     }
 }
@@ -158,9 +158,20 @@ void cast_rays()
         float in_sq_x = decimal_part(player.pos.x);
         float in_sq_y = decimal_part(player.pos.y);
 
+        // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
+        // e.g to prevent div by 0 at certain angles
+        bool ignore_h = false;
+
         // HORIZONTAL CHECK
-        float xi = (1 - in_sq_y) / tan(theta);  // initial "x increment"
-        float dx = 1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
+        if (ray_angle == 0.0f || ray_angle == 180.0f)  // prevent div by 0
+        {
+            ignore_h = true;
+            goto skip_horizontal;
+        }
+
+        // TODO: Conditionally change the sign of these variables to fix angles > 180
+        const float xi = (1 - in_sq_y) / tan(theta);  // initial "x increment"
+        const float dx = 1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
         int y_step = 1;  // change to support other angles
         vec2f h_ray = {player.pos.x + xi, player.pos.y + (1 - in_sq_y)};
 
@@ -177,12 +188,14 @@ void cast_rays()
 
             // check if hit the wall
             index = to_index(h_ray);
-            if (is_oob(index)) goto skip_horizontal;
+            if (is_oob(index)) goto skip_horizontal;  // NOTE: should I undo the ray "extend" because oob?
             h_hit = map[index] != 0;
         }
 
 skip_horizontal:
-        float h_ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
+        float h_ray_length = 0;
+        if (!ignore_h)
+            h_ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
