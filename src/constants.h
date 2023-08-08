@@ -7,17 +7,17 @@
 #define WINDOW_HEIGHT 600
 #define WINDOW_FLAGS 0
 
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 20
-#define MAP_SQUARE_SIZE 23
-#define MAP_BORDER_SIZE 2
+#define MAP_WIDTH 5
+#define MAP_HEIGHT 5
+#define MAP_SQUARE_SIZE 49
+#define MAP_BORDER_SIZE 1
 
 #define PLAYER_SIZE 10
 #define PLAYER_ANGLE_DELTA 1.0f
 #define PLAYER_SPEED 0.1f
 #define FOV 60  // in degrees
 
-#define GAME_WIDTH 800
+#define GAME_WIDTH 1
 #define GAME_HEIGHT 600
 #define RAYCASTING_PRECISION 100
 #define SCALE 700

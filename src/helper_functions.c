@@ -14,7 +14,10 @@ extern Player player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
 extern const Color colors[];
 
-#define to_radians(x) x * (PI / 180)
+#define to_radians(x) (x * (PI / 180))
+#define decimal_part(x) ((double) x - floor(x))
+#define to_index(vec) (floor(vec.y) * MAP_WIDTH + floor(vec.x))
+#define is_oob(x) (x < 0 || x > MAP_WIDTH * MAP_HEIGHT)
 
 void init(SDL_Window** window, SDL_Renderer** renderer)
 {
@@ -42,66 +45,66 @@ void poll_events()
             if (event.key.keysym.sym == SDLK_ESCAPE)
                 running = false;
 
-            else if (event.key.keysym.sym == SDLK_w)
-            {
-                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
-                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+            // else if (event.key.keysym.sym == SDLK_w)
+            // {
+            //     float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+            //     float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
 
-                // if not trying to go into the block
-                if (map[(int) (floor(player.pos.y + dy) * MAP_WIDTH + floor(player.pos.x + dx))] == 0)
-                {
-                    player.pos.x += dx;
-                    player.pos.y += dy;
-                }
-            }
-            else if (event.key.keysym.sym == SDLK_a)
-            {
-                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
-                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+            //     // if not trying to go into the block
+            //     if (map[(int) (floor(player.pos.y + dy) * MAP_WIDTH + floor(player.pos.x + dx))] == 0)
+            //     {
+            //         player.pos.x += dx;
+            //         player.pos.y += dy;
+            //     }
+            // }
+            // else if (event.key.keysym.sym == SDLK_a)
+            // {
+            //     float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+            //     float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
 
-                // if not trying to go into the block
-                if (map[(int) (floor(player.pos.y - dx) * MAP_WIDTH + floor(player.pos.x + dy))] == 0)
-                {
-                    player.pos.x += dy;
-                    player.pos.y -= dx;
-                }
-            }
-            else if (event.key.keysym.sym == SDLK_s)
-            {
-                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
-                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+            //     // if not trying to go into the block
+            //     if (map[(int) (floor(player.pos.y - dx) * MAP_WIDTH + floor(player.pos.x + dy))] == 0)
+            //     {
+            //         player.pos.x += dy;
+            //         player.pos.y -= dx;
+            //     }
+            // }
+            // else if (event.key.keysym.sym == SDLK_s)
+            // {
+            //     float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+            //     float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
 
-                // if not trying to go into the block
-                if (map[(int) (floor(player.pos.y - dy) * MAP_WIDTH + floor(player.pos.x - dx))] == 0)
-                {
-                    player.pos.x -= dx;
-                    player.pos.y -= dy;
-                }
-            }
-            else if (event.key.keysym.sym == SDLK_d)
-            {
-                float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
-                float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
+            //     // if not trying to go into the block
+            //     if (map[(int) (floor(player.pos.y - dy) * MAP_WIDTH + floor(player.pos.x - dx))] == 0)
+            //     {
+            //         player.pos.x -= dx;
+            //         player.pos.y -= dy;
+            //     }
+            // }
+            // else if (event.key.keysym.sym == SDLK_d)
+            // {
+            //     float dx = cos(to_radians(player.angle)) * PLAYER_SPEED;
+            //     float dy = sin(to_radians(player.angle)) * PLAYER_SPEED;
 
-                // if not trying to go into the block
-                if (map[(int) (floor(player.pos.y + dx) * MAP_WIDTH + floor(player.pos.x - dy))] == 0)
-                {
-                    player.pos.x -= dy;
-                    player.pos.y += dx;
-                }
-            }
-            else if (event.key.keysym.sym == SDLK_LEFT)
-            {
-                player.angle -= PLAYER_ANGLE_DELTA;
-                if (player.angle <= 0.0f)
-                    player.angle = 360.0f;
-            }
-            else if (event.key.keysym.sym == SDLK_RIGHT)
-            {
-                player.angle += PLAYER_ANGLE_DELTA;
-                if (player.angle >= 360.0f)
-                    player.angle = 0.0f;
-            }
+            //     // if not trying to go into the block
+            //     if (map[(int) (floor(player.pos.y + dx) * MAP_WIDTH + floor(player.pos.x - dy))] == 0)
+            //     {
+            //         player.pos.x -= dy;
+            //         player.pos.y += dx;
+            //     }
+            // }
+            // else if (event.key.keysym.sym == SDLK_LEFT)
+            // {
+            //     player.angle -= PLAYER_ANGLE_DELTA;
+            //     if (player.angle <= 0.0f)
+            //         player.angle = 360.0f;
+            // }
+            // else if (event.key.keysym.sym == SDLK_RIGHT)
+            // {
+            //     player.angle += PLAYER_ANGLE_DELTA;
+            //     if (player.angle >= 360.0f)
+            //         player.angle = 0.0f;
+            // }
         }
     }
 }
@@ -142,38 +145,64 @@ void draw_player()
 
 void cast_rays()
 {
-    float ray_angle = player.angle - (FOV / 2.0f);
+    // float ray_angle = player.angle - (FOV / 2.0f);
+    float ray_angle = player.angle;
     // incremental computation constant
     float d_angle = (float) FOV / GAME_WIDTH;
 
     for (int x = 0; x < GAME_WIDTH; x++)
     {
-        vec2f ray = player.pos;
-        float ray_angle_rad = to_radians(ray_angle);
-        float ray_dx = cos(ray_angle_rad) / RAYCASTING_PRECISION;
-        float ray_dy = sin(ray_angle_rad) / RAYCASTING_PRECISION;
+        float theta = to_radians(ray_angle);
 
-        unsigned int wall = 0;
-        while (wall == 0)
+        // player in-square coordinates (the decimal part of normal ones)
+        float in_sq_x = decimal_part(player.pos.x);
+        float in_sq_y = decimal_part(player.pos.y);
+
+        // HORIZONTAL CHECK
+        float xi = (1 - in_sq_y) / tan(theta);  // initial "x increment"
+        float dx = 1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
+        int y_step = 1;  // change to support other angles
+        vec2f h_ray = {player.pos.x + xi, player.pos.y + (1 - in_sq_y)};
+
+        // check if this "snapped" point is in some wall
+        // if not, "extend" the ray in while loop
+        int index = to_index(h_ray);
+        if (is_oob(index)) goto skip_horizontal;
+        bool h_hit = map[index] != 0;
+        while (!h_hit)
         {
-            ray.x += ray_dx;
-            ray.y += ray_dy;
+            // update ray
+            h_ray.x += dx;
+            h_ray.y += y_step;
 
-            wall = map[(int) (floor(ray.y) * MAP_WIDTH + floor(ray.x))];
+            // check if hit the wall
+            index = to_index(h_ray);
+            if (is_oob(index)) goto skip_horizontal;
+            h_hit = map[index] != 0;
         }
 
-        // calculate ray length
-        float ray_length = sqrt(pow(player.pos.x - ray.x, 2) + pow(player.pos.y - ray.y, 2));
-        float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
-        float adj_length = ray_length * cos(to_radians(alpha));  // fisheye fix
-        draw_ray_3d(x, adj_length, wall);
+skip_horizontal:
+        float h_ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
                            player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
                            player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
+                           h_ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+                           h_ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
+
+        // // calculate ray length
+        // float ray_length = sqrt(pow(player.pos.x - ray.x, 2) + pow(player.pos.y - ray.y, 2));
+        // float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
+        // float adj_length = ray_length * cos(to_radians(alpha));  // fisheye fix
+        // draw_ray_3d(x, adj_length, wall);
+
+        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        // SDL_RenderDrawLine(renderer,
+        //                    player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+        //                    player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+        //                    ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+        //                    ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
 
         ray_angle += d_angle;
     }
