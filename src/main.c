@@ -11,7 +11,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
-Player player = {{1.5f, 1.5f}, 0.0f};
+Player player = {{7.5f, 7.5f}, 225.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "map.txt"
 };
@@ -35,8 +35,6 @@ int main(int argc, char **argv)
         cast_rays();
 
         SDL_RenderPresent(renderer);
-
-        printf("%f\n", player.angle);
     }
 
     SDL_DestroyRenderer(renderer);

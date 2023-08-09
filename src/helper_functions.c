@@ -209,12 +209,10 @@ void cast_rays()
             }
         }
 
-        draw_ray_3d(x, ray_length, wall);
-
         // fisheye fix
-        // float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
-        // float adj_length = ray_length * cos(to_radians(alpha));
-        // draw_ray_3d(x, adj_length, wall);
+        float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
+        float adj_length = ray_length * cos(to_radians(alpha));
+        draw_ray_3d(x, adj_length, wall);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,

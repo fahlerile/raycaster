@@ -7,8 +7,8 @@
 #define WINDOW_HEIGHT 600
 #define WINDOW_FLAGS 0
 
-#define MAP_WIDTH 5
-#define MAP_HEIGHT 5
+#define MAP_WIDTH 10
+#define MAP_HEIGHT 10
 #define MAP_SQUARE_SIZE 49
 #define MAP_BORDER_SIZE 1
 
