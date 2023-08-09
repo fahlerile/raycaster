@@ -159,24 +159,30 @@ void cast_rays()
 
         vec2f h_ray;
         bool ignore_h;
-        cast_horizontal_ray(ray_angle, tan_theta, in_sq_y, &h_ray, &ignore_h);
+        unsigned int wall_h;
+        cast_horizontal_ray(ray_angle, tan_theta, in_sq_y, &h_ray, &wall_h, &ignore_h);
 
         vec2f v_ray;
         bool ignore_v;
-        cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &ignore_v);
+        unsigned int wall_v;
+        cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &wall_v, &ignore_v);
 
         // choose which ray to use
         vec2f ray;
         float ray_length;
+        unsigned int wall;
+
         if (ignore_h)
         {
             ray = v_ray;
             ray_length = sqrt(pow(player.pos.x - v_ray.x, 2) + pow(player.pos.y - v_ray.y, 2));
+            wall = wall_v;
         }
         else if (ignore_v)
         {
             ray = h_ray;
             ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
+            wall = wall_h;
         }
         else  // no ignores
         {
@@ -187,13 +193,17 @@ void cast_rays()
             {
                 ray = v_ray;
                 ray_length = v_ray_length;
+                wall = wall_v;
             }
             else
             {
                 ray = h_ray;
                 ray_length = h_ray_length;
+                wall = wall_h;
             }
         }
+
+        draw_ray_3d(x, ray_length, wall);
 
         // fisheye fix
         // float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
@@ -212,7 +222,7 @@ void cast_rays()
 }
 
 void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
-                         vec2f *h_ray_out, bool *ignore_h_out)
+                         vec2f *h_ray_out, unsigned int *wall_h, bool *ignore_h_out)
 {
     // HORIZONTAL CHECK
     // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
@@ -248,15 +258,17 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
         if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
         h_hit = map[index] != 0;
     }
+    unsigned int wall = map[index];
 
 skip_horizontal:
     // return needed values
     *h_ray_out = h_ray;
+    *wall_h = wall;
     *ignore_h_out = ignore_h;
 }
 
 void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
-                       vec2f *v_ray_out, bool *ignore_v_out)
+                       vec2f *v_ray_out, unsigned int *wall_v, bool *ignore_v_out)
 {
     // VERTICAL CHECK
     bool ignore_v = false;
@@ -291,10 +303,12 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
         if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
         v_hit = map[index] != 0;
     }
+    unsigned int wall = map[index];
 
 skip_vertical:
     // return needed values
     *v_ray_out = v_ray;
+    *wall_v = wall;
     *ignore_v_out = ignore_v;
 }
 
