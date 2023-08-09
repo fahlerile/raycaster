@@ -235,7 +235,7 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
     // check if this "snapped" point is in some wall
     // if not, "extend" the ray in while loop
     // TODO: CHECK IF NEED TO SUBTRACT MAP WIDTH HERE IF FACING NEGATIVE Y
-    int index = to_index(h_ray);
+    int index = (h_ray_facing_pos_y) ? to_index(h_ray) : to_index(h_ray) - MAP_WIDTH;
     if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
     bool h_hit = map[index] != 0;
     while (!h_hit)
@@ -278,7 +278,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
 
     // check if this "snapped" point is in some wall
     // if not, "extend" the ray in while loop
-    int index = to_index(v_ray);
+    int index = (v_ray_facing_pos_x) ? to_index(v_ray) : to_index(v_ray) - 1;
     if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
     bool v_hit = map[index] != 0;
     while (!v_hit)
