@@ -4,7 +4,8 @@ My simple raycaster engine written in C.
 
 # TODO
 
-- Fix angle rotation issue (happens with multiple rays only)
 - Shading
+- FPS lock
+    - Framerate-safe player movement
 - Textures
 - Game?

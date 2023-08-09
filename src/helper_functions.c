@@ -150,6 +150,10 @@ void cast_rays()
 
     for (int x = 0; x < GAME_WIDTH; x++)
     {
+        // limit angles to [0, 360)
+        if (ray_angle < 0.0f)
+            ray_angle = 360.0f + ray_angle;
+
         float theta = to_radians(ray_angle);
         float tan_theta = tan(theta);
 
@@ -157,11 +161,13 @@ void cast_rays()
         float in_sq_x = decimal_part(player.pos.x);
         float in_sq_y = decimal_part(player.pos.y);
 
-        vec2f h_ray;
-        bool ignore_h;
-        unsigned int wall_h;
+        // cast horizontal ray
+        vec2f h_ray;  // the ray itself
+        bool ignore_h;  // whether or not to ignore this ray from calculations
+        unsigned int wall_h;  // on what kind of wall this ray stumbled upon
         cast_horizontal_ray(ray_angle, tan_theta, in_sq_y, &h_ray, &wall_h, &ignore_h);
 
+        // cast vertical ray
         vec2f v_ray;
         bool ignore_v;
         unsigned int wall_v;
@@ -218,6 +224,9 @@ void cast_rays()
                            ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
 
         ray_angle += d_angle;
+        // limit angles to [0, 360)
+        if (ray_angle >= 360.0f)
+            ray_angle = ray_angle - 360.0f;
     }
 }
 
