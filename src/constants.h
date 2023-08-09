@@ -17,7 +17,7 @@
 #define PLAYER_SPEED 0.1f
 #define FOV 60  // in degrees
 
-#define GAME_WIDTH 1
+#define GAME_WIDTH 800
 #define GAME_HEIGHT 600
 #define RAYCASTING_PRECISION 100
 #define SCALE 700

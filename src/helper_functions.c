@@ -145,10 +145,8 @@ void draw_player()
 
 void cast_rays()
 {
-    // float ray_angle = player.angle - (FOV / 2.0f);
-    float ray_angle = player.angle;
-    // incremental computation constant
-    float d_angle = (float) FOV / GAME_WIDTH;
+    float ray_angle = player.angle - (FOV / 2.0f);
+    float d_angle = (float) FOV / GAME_WIDTH;  // incremental computation constant, delta angle
 
     for (int x = 0; x < GAME_WIDTH; x++)
     {
