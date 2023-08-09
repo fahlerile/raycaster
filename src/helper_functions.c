@@ -188,7 +188,8 @@ void cast_rays()
             h_ray.y += y_step;
 
             // check if hit the wall
-            index = to_index(h_ray);
+            // subtracting map width because it skips 1 block if facing negative y
+            index = (h_ray_facing_pos_y) ? to_index(h_ray) : to_index(h_ray) - MAP_WIDTH;
             if (is_oob(index)) goto skip_horizontal;  // NOTE: should I undo the ray "extend" because oob?
             h_hit = map[index] != 0;
         }
