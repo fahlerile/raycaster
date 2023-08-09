@@ -7,6 +7,7 @@ typedef struct
     float y;
 } vec2f;
 
+// NOTE: use angles in [0, 360)
 typedef struct
 {
     vec2f pos;

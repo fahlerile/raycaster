@@ -96,8 +96,8 @@ void poll_events()
             else if (event.key.keysym.sym == SDLK_LEFT)
             {
                 player.angle -= PLAYER_ANGLE_DELTA;
-                if (player.angle <= 0.0f)
-                    player.angle = 360.0f;
+                if (player.angle <= -1.0f)
+                    player.angle = 359.0f;
             }
             else if (event.key.keysym.sym == SDLK_RIGHT)
             {
@@ -165,6 +165,7 @@ void cast_rays()
         // HORIZONTAL CHECK
         if (ray_angle == 0.0f || ray_angle == 180.0f)  // prevent div by 0
         {
+            printf("Skipping horizontal ray (0 or 180)\n");
             ignore_h = true;
             goto skip_horizontal;
         }
