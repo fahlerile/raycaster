@@ -16,7 +16,7 @@
 
 #define PLAYER_SIZE 10
 #define PLAYER_ANGLE_DELTA 1.0f
-#define PLAYER_SPEED 0.1f
+#define PLAYER_SPEED 0.01f
 #define FOV 60  // in degrees
 
 #define GAME_WIDTH 800

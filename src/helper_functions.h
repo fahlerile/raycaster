@@ -4,7 +4,7 @@
 #include "typedefs.h"
 
 void init(SDL_Window** window, SDL_Renderer** renderer);
-void poll_events();
+void poll_events(int delta_time);
 
 void draw_map();
 void draw_player();

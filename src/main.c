@@ -21,11 +21,19 @@ const color_t colors[] = {
 
 int main(int argc, char **argv)
 {
+    // milliseconds
+    int prev_frame_time = 0;
+    int this_frame_time = 0;
+    int delta_time = 0;
+
     init(&window, &renderer);
 
     while (running)
     {
-        poll_events();
+        this_frame_time = SDL_GetTicks();
+        delta_time = this_frame_time - prev_frame_time;
+
+        poll_events(delta_time);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -35,6 +43,8 @@ int main(int argc, char **argv)
         cast_rays();
 
         SDL_RenderPresent(renderer);
+
+        prev_frame_time = this_frame_time;
     }
 
     SDL_DestroyRenderer(renderer);
