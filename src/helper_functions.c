@@ -206,10 +206,12 @@ skip_horizontal:
             goto skip_vertical;
         }
 
-        const float xi_v = 1 - in_sq_x;
-        const float yi_v = (1 - in_sq_x) * tan(theta);
-        const float dy = tan(theta);  // how much to go in `y` direction to go `x_step` in x direction
-        int x_step = 1;
+        const bool v_ray_facing_pos_x = (ray_angle >= 0.0f && ray_angle < 90.0f) ||
+                                        (ray_angle > 270.0f && ray_angle <= 360.0f || ray_angle == 0);
+        const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -1 + in_sq_x;
+        const float yi_v = (v_ray_facing_pos_x) ? (1 - in_sq_x) * tan(theta) : (-1 + in_sq_x) * tan(theta);
+        const float dy = (v_ray_facing_pos_x) ? tan(theta) : -tan(theta);  // how much to go in `y` direction to go `x_step` in x direction
+        int x_step = (v_ray_facing_pos_x) ? 1 : -1;
         vec2f v_ray = {player.pos.x + xi_v, player.pos.y + yi_v};
 
         // check if this "snapped" point is in some wall
@@ -225,7 +227,7 @@ skip_horizontal:
 
             // check if hit the wall
             // subtracting map width because it skips 1 block if facing negative y
-            index = to_index(v_ray);
+            index = (v_ray_facing_pos_x) ? to_index(v_ray) : to_index(v_ray) - 1;
             if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
             v_hit = map[index] != 0;
         }
