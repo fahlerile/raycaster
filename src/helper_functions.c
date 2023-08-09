@@ -169,16 +169,17 @@ void cast_rays()
             goto skip_horizontal;
         }
 
-        // TODO: Conditionally change the sign of these variables to fix angles > 180
-        const float xi = (1 - in_sq_y) / tan(theta);  // initial "x increment"
-        const float dx = 1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
-        int y_step = 1;  // change to support other angles
-        vec2f h_ray = {player.pos.x + xi, player.pos.y + (1 - in_sq_y)};
+        const bool h_ray_facing_pos_y = ray_angle > 0.0f && ray_angle < 180.0f;  // `pos_y` - positive y
+        const float xi = (h_ray_facing_pos_y) ? (1 - in_sq_y) / tan(theta) : (-1 + in_sq_y) / tan(theta);
+        const float yi = (h_ray_facing_pos_y) ? 1 - in_sq_y : -1 + in_sq_y;
+        const float dx = (h_ray_facing_pos_y) ? 1 / tan(theta) : -1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
+        int y_step = (h_ray_facing_pos_y) ? 1 : -1;  // change to support other angles
+        vec2f h_ray = {player.pos.x + xi, player.pos.y + yi};
 
         // check if this "snapped" point is in some wall
         // if not, "extend" the ray in while loop
         int index = to_index(h_ray);
-        if (is_oob(index)) goto skip_horizontal;
+        if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
         bool h_hit = map[index] != 0;
         while (!h_hit)
         {
