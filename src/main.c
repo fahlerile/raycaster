@@ -11,11 +11,11 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
-Player player = {{7.5f, 7.5f}, 225.0f};
+player_t player = {{7.5f, 7.5f}, 225.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "map.txt"
 };
-const Color colors[] = {
+const color_t colors[] = {
     #include "colors.txt"
 };
 

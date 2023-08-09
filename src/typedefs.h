@@ -12,7 +12,7 @@ typedef struct
 {
     vec2f pos;
     float angle;
-} Player;
+} player_t;
 
 typedef struct
 {
@@ -20,6 +20,6 @@ typedef struct
     unsigned char g;
     unsigned char b;
     unsigned char a;
-} Color;
+} color_t;
 
 #endif  // #ifndef TYPEDEFS_H

@@ -10,9 +10,9 @@ extern bool running;
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_Event event;
-extern Player player;
+extern player_t player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
-extern const Color colors[];
+extern const color_t colors[];
 
 #define to_radians(x) (x * (PI / 180))
 #define decimal_part(x) ((double) x - floor(x))
@@ -116,7 +116,7 @@ void draw_map()
         for (int j = 0; j < MAP_WIDTH; j++)
         {
             int pixel = map[j * MAP_HEIGHT + i];
-            Color color = colors[pixel];
+            color_t color = colors[pixel];
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
             // draw square
@@ -177,12 +177,14 @@ void cast_rays()
         vec2f ray;
         float ray_length;
         unsigned int wall;
+        bool shade = false;
 
         if (ignore_h)
         {
             ray = v_ray;
             ray_length = sqrt(pow(player.pos.x - v_ray.x, 2) + pow(player.pos.y - v_ray.y, 2));
             wall = wall_v;
+            shade = true;
         }
         else if (ignore_v)
         {
@@ -200,6 +202,7 @@ void cast_rays()
                 ray = v_ray;
                 ray_length = v_ray_length;
                 wall = wall_v;
+                shade = true;
             }
             else
             {
@@ -212,7 +215,7 @@ void cast_rays()
         // fisheye fix
         float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
         float adj_length = ray_length * cos(to_radians(alpha));
-        draw_ray_3d(x, adj_length, wall);
+        draw_ray_3d(x, adj_length, wall, shade);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
@@ -319,7 +322,7 @@ skip_vertical:
     *ignore_v_out = ignore_v;
 }
 
-void draw_ray_3d(int x, float ray_length, unsigned int wall)
+void draw_ray_3d(int x, float ray_length, unsigned int wall, bool shade)
 {
     int x_screen = x + WINDOW_WIDTH / 2;
     int ray_length_screen = SCALE / ray_length;
@@ -331,7 +334,14 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall)
     SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, y1);  // draw ceiling
     SDL_RenderDrawLine(renderer, x_screen, y2, x_screen, GAME_HEIGHT);  // draw floor
 
-    Color color = colors[wall];
+    color_t color = colors[wall];
+    if (shade)
+    {
+        color = (color_t) {color.r * SHADE_CONSTANT,
+                           color.g * SHADE_CONSTANT,
+                           color.b * SHADE_CONSTANT,
+                           color.a * SHADE_CONSTANT};
+    }
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);  // draw wall
 }
