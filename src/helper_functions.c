@@ -158,27 +158,25 @@ void cast_rays()
         float in_sq_x = decimal_part(player.pos.x);
         float in_sq_y = decimal_part(player.pos.y);
 
-        // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
-        // e.g to prevent div by 0 at certain angles
-        bool ignore_h = false;
-
         // HORIZONTAL CHECK
+        // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
+        bool ignore_h = false;
         if (ray_angle == 0.0f || ray_angle == 180.0f)  // prevent div by 0
         {
-            printf("Skipping horizontal ray (0 or 180)\n");
             ignore_h = true;
             goto skip_horizontal;
         }
 
         const bool h_ray_facing_pos_y = ray_angle > 0.0f && ray_angle < 180.0f;  // `pos_y` - positive y
-        const float xi = (h_ray_facing_pos_y) ? (1 - in_sq_y) / tan(theta) : (-1 + in_sq_y) / tan(theta);
-        const float yi = (h_ray_facing_pos_y) ? 1 - in_sq_y : -1 + in_sq_y;
+        const float xi_h = (h_ray_facing_pos_y) ? (1 - in_sq_y) / tan(theta) : (-1 + in_sq_y) / tan(theta);
+        const float yi_h = (h_ray_facing_pos_y) ? 1 - in_sq_y : -1 + in_sq_y;
         const float dx = (h_ray_facing_pos_y) ? 1 / tan(theta) : -1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
-        int y_step = (h_ray_facing_pos_y) ? 1 : -1;  // change to support other angles
-        vec2f h_ray = {player.pos.x + xi, player.pos.y + yi};
+        int y_step = (h_ray_facing_pos_y) ? 1 : -1;
+        vec2f h_ray = {player.pos.x + xi_h, player.pos.y + yi_h};
 
         // check if this "snapped" point is in some wall
         // if not, "extend" the ray in while loop
+        // TODO: CHECK IF NEED TO SUBTRACT MAP WIDTH HERE IF FACING NEGATIVE Y
         int index = to_index(h_ray);
         if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
         bool h_hit = map[index] != 0;
@@ -191,7 +189,7 @@ void cast_rays()
             // check if hit the wall
             // subtracting map width because it skips 1 block if facing negative y
             index = (h_ray_facing_pos_y) ? to_index(h_ray) : to_index(h_ray) - MAP_WIDTH;
-            if (is_oob(index)) goto skip_horizontal;  // NOTE: should I undo the ray "extend" because oob?
+            if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
             h_hit = map[index] != 0;
         }
 
@@ -200,12 +198,51 @@ skip_horizontal:
         if (!ignore_h)
             h_ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
 
+        // VERTICAL CHECK
+        bool ignore_v = false;
+        if (ray_angle == 90.0f || ray_angle == 270.0f)  // prevent div by 0
+        {
+            ignore_v = true;
+            goto skip_vertical;
+        }
+
+        const float xi_v = 1 - in_sq_x;
+        const float yi_v = (1 - in_sq_x) * tan(theta);
+        const float dy = tan(theta);  // how much to go in `y` direction to go `x_step` in x direction
+        int x_step = 1;
+        vec2f v_ray = {player.pos.x + xi_v, player.pos.y + yi_v};
+
+        // check if this "snapped" point is in some wall
+        // if not, "extend" the ray in while loop
+        index = to_index(v_ray);
+        if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
+        bool v_hit = map[index] != 0;
+        while (!v_hit)
+        {
+            // update ray
+            v_ray.x += x_step;
+            v_ray.y += dy;
+
+            // check if hit the wall
+            // subtracting map width because it skips 1 block if facing negative y
+            index = to_index(v_ray);
+            if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
+            v_hit = map[index] != 0;
+        }
+
+skip_vertical:
+        float v_ray_length = 0;
+        if (!ignore_v)
+            v_ray_length = sqrt(pow(player.pos.x - v_ray.x, 2) + pow(player.pos.y - v_ray.y, 2));
+
+        // choose which ray to use
+
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderDrawLine(renderer,
                            player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
                            player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           h_ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           h_ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
+                           v_ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+                           v_ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
 
         // // calculate ray length
         // float ray_length = sqrt(pow(player.pos.x - ray.x, 2) + pow(player.pos.y - ray.y, 2));
