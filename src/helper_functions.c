@@ -153,6 +153,7 @@ void cast_rays()
     for (int x = 0; x < GAME_WIDTH; x++)
     {
         float theta = to_radians(ray_angle);
+        float tan_theta = tan(theta);
 
         // player in-square coordinates (the decimal part of normal ones)
         float in_sq_x = decimal_part(player.pos.x);
@@ -160,11 +161,11 @@ void cast_rays()
 
         vec2f h_ray;
         bool ignore_h;
-        cast_horizontal_ray(ray_angle, theta, in_sq_y, &h_ray, &ignore_h);
+        cast_horizontal_ray(ray_angle, tan_theta, in_sq_y, &h_ray, &ignore_h);
 
         vec2f v_ray;
         bool ignore_v;
-        cast_vertical_ray(ray_angle, theta, in_sq_x, &v_ray, &ignore_v);
+        cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &ignore_v);
 
         // choose which ray to use
         vec2f ray;
@@ -212,7 +213,7 @@ void cast_rays()
     }
 }
 
-void cast_horizontal_ray(float ray_angle, float theta, float in_sq_y,
+void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
                          vec2f *h_ray_out, bool *ignore_h_out)
 {
     // HORIZONTAL CHECK
@@ -225,9 +226,9 @@ void cast_horizontal_ray(float ray_angle, float theta, float in_sq_y,
     }
 
     const bool h_ray_facing_pos_y = ray_angle > 0.0f && ray_angle < 180.0f;  // `pos_y` - positive y
-    const float xi_h = (h_ray_facing_pos_y) ? (1 - in_sq_y) / tan(theta) : (-1 + in_sq_y) / tan(theta);
     const float yi_h = (h_ray_facing_pos_y) ? 1 - in_sq_y : -1 + in_sq_y;
-    const float dx = (h_ray_facing_pos_y) ? 1 / tan(theta) : -1 / tan(theta);  // how much to go in `x` direction to go `y_step` in y direction
+    const float xi_h = yi_h / tan_theta;
+    const float dx = (h_ray_facing_pos_y) ? 1 / tan_theta : -1 / tan_theta;  // how much to go in `x` direction to go `y_step` in y direction
     int y_step = (h_ray_facing_pos_y) ? 1 : -1;
     vec2f h_ray = {player.pos.x + xi_h, player.pos.y + yi_h};
 
@@ -256,7 +257,7 @@ skip_horizontal:
     *ignore_h_out = ignore_h;
 }
 
-void cast_vertical_ray(float ray_angle, float theta, float in_sq_x,
+void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
                        vec2f *v_ray_out, bool *ignore_v_out)
 {
     // VERTICAL CHECK
@@ -270,8 +271,8 @@ void cast_vertical_ray(float ray_angle, float theta, float in_sq_x,
     const bool v_ray_facing_pos_x = (ray_angle >= 0.0f && ray_angle < 90.0f) ||
                                     (ray_angle > 270.0f && ray_angle <= 360.0f || ray_angle == 0);
     const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -1 + in_sq_x;
-    const float yi_v = (v_ray_facing_pos_x) ? (1 - in_sq_x) * tan(theta) : (-1 + in_sq_x) * tan(theta);
-    const float dy = (v_ray_facing_pos_x) ? tan(theta) : -tan(theta);  // how much to go in `y` direction to go `x_step` in x direction
+    const float yi_v = xi_v * tan_theta;
+    const float dy = (v_ray_facing_pos_x) ? tan_theta : -tan_theta;  // how much to go in `y` direction to go `x_step` in x direction
     int x_step = (v_ray_facing_pos_x) ? 1 : -1;
     vec2f v_ray = {player.pos.x + xi_v, player.pos.y + yi_v};
 
