@@ -26,10 +26,16 @@ void init(SDL_Window** window, SDL_Renderer** renderer)
         printf("Failed to initialize SDL2 library: %c", SDL_GetError());
 	    exit(ERROR_CODE_SDL_INITIALIZATION);
     }
-    if (SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS, window, renderer) != 0)
+    if ((*window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                    WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS)) == NULL)
     {
-        printf("Failed to create window/renderer: %c", SDL_GetError());
-        exit(ERROR_CODE_SDL_CREATE_WINDOW_OR_RENDERER);
+        printf("Failed to create window: %c", SDL_GetError());
+        exit(ERROR_CODE_SDL_CREATE_WINDOW);
+    }
+    if ((*renderer = SDL_CreateRenderer(*window, -1, RENDERER_FLAGS)) == NULL)
+    {
+        printf("Failed to create renderer: %c", SDL_GetError());
+        exit(ERROR_CODE_SDL_CREATE_RENDERER);
     }
 }
 
