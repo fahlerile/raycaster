@@ -61,9 +61,9 @@ void poll_events(int delta_time)
                 vec2f after_movement;
 
                 if (event.key.keysym.sym == SDLK_w)
-                    after_movement = (vec2f) {player.pos.x += dx, player.pos.y += dy};
+                    after_movement = (vec2f) {player.pos.x + dx, player.pos.y + dy};
                 else if (event.key.keysym.sym == SDLK_s)
-                    after_movement = (vec2f) {player.pos.x -= dx, player.pos.y -= dy};
+                    after_movement = (vec2f) {player.pos.x - dx, player.pos.y - dy};
 
                 else if (event.key.keysym.sym == SDLK_a)
                     after_movement = (vec2f) {player.pos.x + dy, player.pos.y - dx};
@@ -197,9 +197,8 @@ void cast_rays()
             }
         }
 
-        // fisheye fix
-        float alpha = ray_angle - player.angle;  // angle between ray and player's view (degrees)
-        float adj_length = ray_length * cos(to_radians(alpha));
+        // TODO: fisheye fix
+        float adj_length = ray_length;
         draw_ray_3d(x, adj_length, wall, shade);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
