@@ -30,5 +30,5 @@ target_link_libraries(
   "${SDL2_LIB}"
 )
 
-file(COPY res/ DESTINATION bin/res/)  # copy resources to bin
+# file(COPY res/ DESTINATION bin/res/)  # copy resources to bin
 file(COPY lib/SDL2.dll DESTINATION bin/)  # copy dynamic library to bin

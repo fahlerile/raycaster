@@ -128,7 +128,8 @@ void draw_player()
 
 void cast_rays()
 {
-    float ray_angle = player.angle - (FOV / 2.0f);
+    // float ray_angle = player.angle - (FOV / 2.0f);
+    float ray_angle = player.angle;
     float d_angle = (float) FOV / GAME_WIDTH;  // incremental computation constant, delta angle
 
     for (int x = 0; x < GAME_WIDTH; x++)
@@ -157,6 +158,7 @@ void cast_rays()
         cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &wall_v, &ignore_v);
 
         // choose which ray to use
+
         vec2f ray;
         float ray_length;
         unsigned int wall;
@@ -215,7 +217,7 @@ void cast_rays()
 }
 
 void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
-                         vec2f *h_ray_out, unsigned int *wall_h, bool *ignore_h_out)
+                         vec2f *h_ray_out, unsigned int *wall_h_out, bool *ignore_h_out)
 {
     // HORIZONTAL CHECK
     // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
@@ -227,7 +229,7 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
     }
 
     const bool h_ray_facing_pos_y = ray_angle > 0.0f && ray_angle < 180.0f;  // `pos_y` - positive y
-    const float yi_h = (h_ray_facing_pos_y) ? 1 - in_sq_y : -1 + in_sq_y;
+    const float yi_h = (h_ray_facing_pos_y) ? 1 - in_sq_y : -in_sq_y;
     const float xi_h = yi_h / tan_theta;
     const float dx = (h_ray_facing_pos_y) ? 1 / tan_theta : -1 / tan_theta;  // how much to go in `x` direction to go `y_step` in y direction
     int y_step = (h_ray_facing_pos_y) ? 1 : -1;
@@ -237,7 +239,11 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
     // if not, "extend" the ray in while loop
     // TODO: CHECK IF NEED TO SUBTRACT MAP WIDTH HERE IF FACING NEGATIVE Y
     int index = (h_ray_facing_pos_y) ? to_index(h_ray) : to_index(h_ray) - MAP_WIDTH;
-    if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
+    if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT || h_ray.x < 0 || h_ray.y < 0)
+    {
+        ignore_h = true;
+        goto skip_horizontal;
+    }
     bool h_hit = map[index] != 0;
     while (!h_hit)
     {
@@ -248,7 +254,11 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
         // check if hit the wall
         // subtracting map width because it skips 1 block if facing negative y
         index = (h_ray_facing_pos_y) ? to_index(h_ray) : to_index(h_ray) - MAP_WIDTH;
-        if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT) goto skip_horizontal;
+        if (is_oob(index) || h_ray.x > MAP_WIDTH || h_ray.y > MAP_HEIGHT || h_ray.x < 0 || h_ray.y < 0)
+        {
+            ignore_h = true;
+            goto skip_horizontal;
+        }
         h_hit = map[index] != 0;
     }
     unsigned int wall = map[index];
@@ -256,12 +266,12 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
 skip_horizontal:
     // return needed values
     *h_ray_out = h_ray;
-    *wall_h = wall;
+    *wall_h_out = wall;
     *ignore_h_out = ignore_h;
 }
 
 void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
-                       vec2f *v_ray_out, unsigned int *wall_v, bool *ignore_v_out)
+                       vec2f *v_ray_out, unsigned int *wall_v_out, bool *ignore_v_out)
 {
     // VERTICAL CHECK
     bool ignore_v = false;
@@ -273,7 +283,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
 
     const bool v_ray_facing_pos_x = (ray_angle >= 0.0f && ray_angle < 90.0f) ||
                                     (ray_angle > 270.0f && ray_angle <= 360.0f || ray_angle == 0);
-    const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -1 + in_sq_x;
+    const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -(1 - in_sq_x);
     const float yi_v = xi_v * tan_theta;
     const float dy = (v_ray_facing_pos_x) ? tan_theta : -tan_theta;  // how much to go in `y` direction to go `x_step` in x direction
     int x_step = (v_ray_facing_pos_x) ? 1 : -1;
@@ -282,7 +292,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
     // check if this "snapped" point is in some wall
     // if not, "extend" the ray in while loop
     int index = (v_ray_facing_pos_x) ? to_index(v_ray) : to_index(v_ray) - 1;
-    if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
+    if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT || v_ray.x < 0 || v_ray.y < 0) goto skip_vertical;
     bool v_hit = map[index] != 0;
     while (!v_hit)
     {
@@ -293,7 +303,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
         // check if hit the wall
         // subtracting map width because it skips 1 block if facing negative y
         index = (v_ray_facing_pos_x) ? to_index(v_ray) : to_index(v_ray) - 1;
-        if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT) goto skip_vertical;
+        if (is_oob(index) || v_ray.x > MAP_WIDTH || v_ray.y > MAP_HEIGHT || v_ray.x < 0 || v_ray.y < 0) goto skip_vertical;
         v_hit = map[index] != 0;
     }
     unsigned int wall = map[index];
@@ -301,7 +311,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
 skip_vertical:
     // return needed values
     *v_ray_out = v_ray;
-    *wall_v = wall;
+    *wall_v_out = wall;
     *ignore_v_out = ignore_v;
 }
 
