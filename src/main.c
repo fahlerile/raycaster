@@ -11,7 +11,7 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
-player_t player = {{7.5f, 7.25f}, 200.0f};
+player_t player = {{7.25f, 7.5f}, 200.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "map.txt"
 };

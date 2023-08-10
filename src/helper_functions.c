@@ -283,7 +283,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
 
     const bool v_ray_facing_pos_x = (ray_angle >= 0.0f && ray_angle < 90.0f) ||
                                     (ray_angle > 270.0f && ray_angle <= 360.0f || ray_angle == 0);
-    const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -(1 - in_sq_x);
+    const float xi_v = (v_ray_facing_pos_x) ? 1 - in_sq_x : -in_sq_x;
     const float yi_v = xi_v * tan_theta;
     const float dy = (v_ray_facing_pos_x) ? tan_theta : -tan_theta;  // how much to go in `y` direction to go `x_step` in x direction
     int x_step = (v_ray_facing_pos_x) ? 1 : -1;
