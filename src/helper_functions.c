@@ -128,8 +128,7 @@ void draw_player()
 
 void cast_rays()
 {
-    // float ray_angle = player.angle - (FOV / 2.0f);
-    float ray_angle = player.angle;
+    float ray_angle = player.angle - (FOV / 2.0f);
     float d_angle = (float) FOV / GAME_WIDTH;  // incremental computation constant, delta angle
 
     for (int x = 0; x < GAME_WIDTH; x++)
@@ -197,8 +196,9 @@ void cast_rays()
             }
         }
 
-        // TODO: fisheye fix
-        float adj_length = ray_length;
+        // fisheye fix
+        float alpha = player.angle - ray_angle;
+        float adj_length = ray_length * cos(to_radians(alpha));
         draw_ray_3d(x, adj_length, wall, shade);
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
