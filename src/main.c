@@ -45,8 +45,6 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
 
         prev_frame_time = this_frame_time;
-
-        printf("%f\n", player.angle);
     }
 
     SDL_DestroyRenderer(renderer);
