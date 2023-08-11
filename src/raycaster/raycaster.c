@@ -102,7 +102,7 @@ void cast_rays()
 void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
                          vec2f *ray_out, unsigned int *wall_out, bool *ignore_out)
 {
-    // whether or not to COMPLETELY ignore ray_(h or v) from determining the closest ray
+    // whether or not to COMPLETELY ignore ray from calculations
     bool ignore_ray = false;
     if (ray_angle == 0.0f || ray_angle == 180.0f)  // prevent div by 0
     {
@@ -119,7 +119,6 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
 
     // check if this "snapped" point is in some wall
     // if not, "extend" the ray in while loop
-    // TODO: CHECK IF NEED TO SUBTRACT MAP WIDTH HERE IF FACING NEGATIVE Y
     int index = (ray_facing_pos_y) ? to_index(ray) : to_index(ray) - MAP_WIDTH;
     if (is_oob(index) || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
     {
@@ -155,6 +154,7 @@ skip_horizontal:
 void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
                        vec2f *ray_out, unsigned int *wall_out, bool *ignore_out)
 {
+    // whether or not to COMPLETELY ignore ray from calculations
     bool ignore_ray = false;
     if (ray_angle == 90.0f || ray_angle == 270.0f)  // prevent div by 0
     {
