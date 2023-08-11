@@ -16,10 +16,10 @@ SDL_Event event;
 
 player_t player = {{7.25f, 7.5f}, 200.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
-    #include "map.txt"
+    #include "maps/map.txt"
 };
 const color_t colors[] = {
-    #include "colors.txt"
+    #include "maps/colors.txt"
 };
 
 int main(int argc, char **argv)
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
         poll_events(delta_time);
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        set_color((color_t) {0, 0, 0, 255});
         SDL_RenderClear(renderer);
 
         draw_map();

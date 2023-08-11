@@ -7,6 +7,7 @@
 #include "draw/draw.h"
 #include "constants.h"
 #include "typedefs.h"
+#include "utils.h"
 
 extern SDL_Renderer *renderer;
 extern player_t player;

@@ -7,9 +7,11 @@
 #include "raycaster/raycaster.h"
 #include "constants.h"
 #include "typedefs.h"
+#include "utils.h"
 
 extern bool running;
 extern SDL_Event event;
+extern SDL_Renderer *renderer;
 extern player_t player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
 
@@ -84,4 +86,9 @@ void poll_events(int delta_time)
             }
         }
     }
+}
+
+void set_color(color_t color)
+{
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 }

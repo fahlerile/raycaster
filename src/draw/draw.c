@@ -15,8 +15,7 @@ void draw_map()
         for (int j = 0; j < MAP_WIDTH; j++)
         {
             int pixel = map[j * MAP_HEIGHT + i];
-            color_t color = colors[pixel];
-            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+            set_color(colors[pixel]);
 
             // draw square
             SDL_Rect square = {
@@ -32,19 +31,19 @@ void draw_map()
 
 void draw_player()
 {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    set_color(TWO_D_PLAYER_COLOR);
     SDL_Rect player_rect = {
-        player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - PLAYER_SIZE / 2,
-        player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - PLAYER_SIZE / 2,
-        PLAYER_SIZE,
-        PLAYER_SIZE
+        player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - TWO_D_PLAYER_SIZE / 2,
+        player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - TWO_D_PLAYER_SIZE / 2,
+        TWO_D_PLAYER_SIZE,
+        TWO_D_PLAYER_SIZE
     };
     SDL_RenderFillRect(renderer, &player_rect);
 }
 
 void draw_ray_2d(vec2f ray)
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    set_color(TWO_D_RAY_COLOR);
     SDL_RenderDrawLine(renderer,
                        player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
                        player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
@@ -60,7 +59,7 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, bool shade)
     int y1 = GAME_HEIGHT / 2 - ray_length_screen / 2;
     int y2 = y1 + ray_length_screen;
 
-    SDL_SetRenderDrawColor(renderer, colors[0].r, colors[0].g, colors[0].b, colors[0].a);
+    set_color(THREE_D_CEILING_AND_FLOOR_COLOR);
     SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, y1);  // draw ceiling
     SDL_RenderDrawLine(renderer, x_screen, y2, x_screen, GAME_HEIGHT);  // draw floor
 
@@ -72,6 +71,6 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, bool shade)
                            color.b * SHADE_CONSTANT,
                            color.a * SHADE_CONSTANT};
     }
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    set_color(color);
     SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);  // draw wall
 }
