@@ -4,8 +4,9 @@
 #include <SDL2/SDL.h>
 
 #include "raycaster/raycaster.h"
-#include "draw/draw.h"
 #include "sdl_utils/sdl_utils.h"
+#include "ppm_loader/ppm_loader.h"
+#include "draw/draw.h"
 #include "constants.h"
 #include "typedefs.h"
 
@@ -24,34 +25,37 @@ const color_t colors[] = {
 
 int main(int argc, char **argv)
 {
-    // milliseconds
-    int prev_frame_time = 0;
-    int this_frame_time = 0;
-    int delta_time = 0;
+    ppm_image_t *stone_wall = load_ppm_image("res/stone_wall.ppm");
+    free_ppm_image(stone_wall);
 
-    init(&window, &renderer);
+    // // milliseconds
+    // int prev_frame_time = 0;
+    // int this_frame_time = 0;
+    // int delta_time = 0;
 
-    while (running)
-    {
-        this_frame_time = SDL_GetTicks();
-        delta_time = this_frame_time - prev_frame_time;
+    // init(&window, &renderer);
 
-        poll_events(delta_time);
+    // while (running)
+    // {
+    //     this_frame_time = SDL_GetTicks();
+    //     delta_time = this_frame_time - prev_frame_time;
 
-        set_color((color_t) {0, 0, 0, 255});
-        SDL_RenderClear(renderer);
+    //     poll_events(delta_time);
 
-        draw_map();
-        draw_player();
-        cast_rays();
+    //     set_color((color_t) {0, 0, 0, 255});
+    //     SDL_RenderClear(renderer);
 
-        SDL_RenderPresent(renderer);
+    //     draw_map();
+    //     draw_player();
+    //     cast_rays();
 
-        prev_frame_time = this_frame_time;
-    }
+    //     SDL_RenderPresent(renderer);
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return 0;
+    //     prev_frame_time = this_frame_time;
+    // }
+
+    // SDL_DestroyRenderer(renderer);
+    // SDL_DestroyWindow(window);
+    // SDL_Quit();
+    // return 0;
 }

@@ -45,7 +45,7 @@ void cast_rays()
         cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &wall_v, &ignore_v);
 
         // both rays were ignored from calculations, this is undefined behaviour
-        assert(!(ignore_h && ignore_v));
+        assert((ignore_h == false) && (ignore_v == false));
 
         // choose which ray to use (the one with shorter length if no ignores)
         vec2f ray;

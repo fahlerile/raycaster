@@ -7,6 +7,7 @@ set(
   src/raycaster/raycaster.c
   src/draw/draw.c
   src/sdl_utils/sdl_utils.c
+  src/ppm_loader/ppm_loader.c
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin
@@ -27,10 +28,18 @@ find_library(
   REQUIRED
 )
 
-target_link_libraries(
-  ${PROJECT_NAME} PRIVATE
-  "${SDL2_LIB}"
-)
+if(UNIX)
+  target_link_libraries(
+    ${PROJECT_NAME} PRIVATE
+    "${SDL2_LIB}"
+    m
+  )
+else()
+  target_link_libraries(
+    ${PROJECT_NAME} PRIVATE
+    "${SDL2_LIB}"
+  )
+endif(UNIX)
 
-# file(COPY res/ DESTINATION bin/res/)  # copy resources to bin
+file(COPY res/ DESTINATION bin/res/)  # copy resources to bin
 file(COPY lib/SDL2.dll DESTINATION bin/)  # copy dynamic library to bin
