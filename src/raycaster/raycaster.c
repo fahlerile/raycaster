@@ -1,130 +1,16 @@
-#include <stdio.h>
 #include <math.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+
+#include "sdl_utils/sdl_utils.h"
+#include "raycaster.h"
+#include "draw/draw.h"
 #include "constants.h"
 #include "typedefs.h"
-#include "helper_functions.h"
 
-extern bool running;
-extern SDL_Window* window;
-extern SDL_Renderer* renderer;
-extern SDL_Event event;
+extern SDL_Renderer *renderer;
 extern player_t player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
-extern const color_t colors[];
-
-#define to_radians(x) (x * (PI / 180))
-#define decimal_part(x) ((double) x - floor(x))
-#define to_index(vec) (floor(vec.y) * MAP_WIDTH + floor(vec.x))
-#define is_oob(x) (x < 0 || x > MAP_WIDTH * MAP_HEIGHT)
-
-void init(SDL_Window** window, SDL_Renderer** renderer)
-{
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        printf("Failed to initialize SDL2 library: %c", SDL_GetError());
-	    exit(ERROR_CODE_SDL_INITIALIZATION);
-    }
-    if ((*window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                    WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS)) == NULL)
-    {
-        printf("Failed to create window: %c", SDL_GetError());
-        exit(ERROR_CODE_SDL_CREATE_WINDOW);
-    }
-    if ((*renderer = SDL_CreateRenderer(*window, -1, RENDERER_FLAGS)) == NULL)
-    {
-        printf("Failed to create renderer: %c", SDL_GetError());
-        exit(ERROR_CODE_SDL_CREATE_RENDERER);
-    }
-}
-
-void poll_events(int delta_time)
-{
-    while (SDL_PollEvent(&event))
-    {
-        if (event.type == SDL_QUIT)
-            running = false;
-
-        else if (event.type == SDL_KEYDOWN)
-        {
-            if (event.key.keysym.sym == SDLK_ESCAPE)
-                running = false;
-
-            else if (event.key.keysym.sym == SDLK_w || event.key.keysym.sym == SDLK_s ||
-                     event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d)
-            {
-                float speed = PLAYER_SPEED * delta_time;
-                float player_angle_rad = to_radians(player.angle);
-                float dx = cos(player_angle_rad) * speed;
-                float dy = sin(player_angle_rad) * speed;
-                vec2f after_movement;
-
-                if (event.key.keysym.sym == SDLK_w)
-                    after_movement = (vec2f) {player.pos.x + dx, player.pos.y + dy};
-                else if (event.key.keysym.sym == SDLK_s)
-                    after_movement = (vec2f) {player.pos.x - dx, player.pos.y - dy};
-
-                else if (event.key.keysym.sym == SDLK_a)
-                    after_movement = (vec2f) {player.pos.x + dy, player.pos.y - dx};
-                else if (event.key.keysym.sym == SDLK_d)
-                    after_movement = (vec2f) {player.pos.x - dy, player.pos.y + dx};
-
-                bool is_going_to_be_inside_wall = map[(int) (to_index(after_movement))] != 0;
-
-                if (!is_going_to_be_inside_wall)
-                    player.pos = after_movement;
-            }
-
-            else if (event.key.keysym.sym == SDLK_LEFT)
-            {
-                player.angle -= PLAYER_ANGLE_DELTA;
-                if (player.angle <= -1.0f)
-                    player.angle = 359.0f;
-            }
-            else if (event.key.keysym.sym == SDLK_RIGHT)
-            {
-                player.angle += PLAYER_ANGLE_DELTA;
-                if (player.angle >= 360.0f)
-                    player.angle = 0.0f;
-            }
-        }
-    }
-}
-
-void draw_map()
-{
-    for (int i = 0; i < MAP_HEIGHT; i++)
-    {
-        for (int j = 0; j < MAP_WIDTH; j++)
-        {
-            int pixel = map[j * MAP_HEIGHT + i];
-            color_t color = colors[pixel];
-            SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-
-            // draw square
-            SDL_Rect square = {
-                i * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                j * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                MAP_SQUARE_SIZE,
-                MAP_SQUARE_SIZE
-            };
-            SDL_RenderFillRect(renderer, &square);
-        }
-    }
-}
-
-void draw_player()
-{
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_Rect player_rect = {
-        player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - PLAYER_SIZE / 2,
-        player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - PLAYER_SIZE / 2,
-        PLAYER_SIZE,
-        PLAYER_SIZE
-    };
-    SDL_RenderFillRect(renderer, &player_rect);
-}
 
 void cast_rays()
 {
@@ -200,13 +86,7 @@ void cast_rays()
         float alpha = player.angle - ray_angle;
         float adj_length = ray_length * cos(to_radians(alpha));
         draw_ray_3d(x, adj_length, wall, shade);
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderDrawLine(renderer,
-                           player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                           ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
+        draw_ray_2d(ray);
 
         ray_angle += d_angle;
         // limit angles to [0, 360)
@@ -312,28 +192,4 @@ skip_vertical:
     *v_ray_out = v_ray;
     *wall_v_out = wall;
     *ignore_v_out = ignore_v;
-}
-
-void draw_ray_3d(int x, float ray_length, unsigned int wall, bool shade)
-{
-    int x_screen = x + WINDOW_WIDTH / 2;
-    int ray_length_screen = SCALE / ray_length;
-
-    int y1 = GAME_HEIGHT / 2 - ray_length_screen / 2;
-    int y2 = y1 + ray_length_screen;
-
-    SDL_SetRenderDrawColor(renderer, colors[0].r, colors[0].g, colors[0].b, colors[0].a);
-    SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, y1);  // draw ceiling
-    SDL_RenderDrawLine(renderer, x_screen, y2, x_screen, GAME_HEIGHT);  // draw floor
-
-    color_t color = colors[wall];
-    if (shade)
-    {
-        color = (color_t) {color.r * SHADE_CONSTANT,
-                           color.g * SHADE_CONSTANT,
-                           color.b * SHADE_CONSTANT,
-                           color.a * SHADE_CONSTANT};
-    }
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderDrawLine(renderer, x_screen, y1, x_screen, y2);  // draw wall
 }

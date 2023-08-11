@@ -2,7 +2,10 @@
 #include <stdbool.h>
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
-#include "helper_functions.h"
+
+#include "raycaster/raycaster.h"
+#include "draw/draw.h"
+#include "sdl_utils/sdl_utils.h"
 #include "constants.h"
 #include "typedefs.h"
 
