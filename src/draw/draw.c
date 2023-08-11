@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "draw.h"
+#include "sdl_utils/sdl_utils.h"
 #include "constants.h"
 #include "typedefs.h"
 
