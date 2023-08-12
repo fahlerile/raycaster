@@ -11,6 +11,9 @@
 #include "typedefs.h"
 
 bool running = true;
+#ifdef DEBUG
+bool draw_map = false;
+#endif
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
@@ -54,9 +57,14 @@ int main(int argc, char **argv)
         set_color((color_t) {0, 0, 0, 255});
         SDL_RenderClear(renderer);
 
-        draw_map();
-        draw_player();
         cast_rays();
+        #ifdef DEBUG
+        if (draw_map)
+        {
+            draw_2d_map();
+            draw_player();
+        }
+        #endif
 
         // swap buffers
         SDL_RenderPresent(renderer);

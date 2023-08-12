@@ -15,6 +15,9 @@ extern SDL_Event event;
 extern SDL_Renderer *renderer;
 extern player_t player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
+#ifdef DEBUG
+extern bool draw_map;
+#endif
 
 // Initializes SDL window and renderer objects
 void init(SDL_Window **window, SDL_Renderer **renderer)
@@ -95,6 +98,14 @@ void poll_events(int delta_time)
                 if (player.angle >= 360.0f)  // limit angles
                     player.angle = 0.0f;
             }
+
+            // if player wants to toggle map
+            #ifdef DEBUG
+            else if (event.key.keysym.sym = SDLK_m)
+            {
+                draw_map = !draw_map;
+            }
+            #endif
         }
     }
 }

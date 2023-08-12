@@ -14,7 +14,8 @@ extern SDL_Renderer *renderer;
 extern player_t player;
 extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
 
-// Cast the rays. This includes drawing them in 2D map and on the screen as 3D projection.
+// Cast the rays. This includes drawing 2D map (if needed) and rays themselves
+// in 2D map (if needed) and on the screen as 3D projection.
 void cast_rays()
 {
     float ray_angle = player.angle - (FOV / 2.0f);  // initial value for incremental computation,
@@ -101,7 +102,6 @@ void cast_rays()
 
         // draw rays in 3D and in 2D
         draw_ray_3d(x, adj_length, wall, hit_in_sq_coordinate, shade);
-        draw_ray_2d(ray);
 
         // move to the next ray
         ray_angle += d_angle;

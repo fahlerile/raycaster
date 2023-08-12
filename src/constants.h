@@ -1,12 +1,14 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#define DEBUG  // whether or not the player is able to see the map with M
+
 // MATH CONSTANTS
 #define PI 3.14159265359
 
 // SDL CONSTANTS
 #define WINDOW_TITLE "Raycaster"
-#define WINDOW_WIDTH 1600
+#define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 #define WINDOW_FLAGS 0
 #define RENDERER_FLAGS SDL_RENDERER_PRESENTVSYNC
@@ -16,11 +18,11 @@
 #define MAP_HEIGHT 20  // max height of the map, in tiles
 
 // 2D MAP & PLAYER CONSTANTS
-#define MAP_SQUARE_SIZE 24    // pixels
-#define MAP_BORDER_SIZE 1     // pixels
+#define MAP_SQUARE_SIZE 25    // pixels
+#define MAP_BORDER_SIZE 0     // pixels
 #define TWO_D_PLAYER_SIZE 10  // pixels
 #define TWO_D_MAP_ZERO_COLOR (color_t) {255, 255, 255, 255}   // color of empty space in 2d map
-#define TWO_D_MAP_BLOCK_COLOR (color_t) {100, 100, 100, 255}  // color of some block in 2d map
+#define TWO_D_MAP_BLOCK_COLOR (color_t) {0, 0, 0, 255}  // color of some block in 2d map
 #define TWO_D_PLAYER_COLOR (color_t) {255, 0, 0, 255}         // player color in 2d map
 #define TWO_D_RAY_COLOR (color_t) {0, 0, 0, 255}              // ray color in 2d map
 

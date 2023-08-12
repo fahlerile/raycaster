@@ -14,7 +14,7 @@ extern const ppm_image_t *textures[];
 extern player_t player;
 
 // Draw 2D map
-void draw_map()
+void draw_2d_map()
 {
     // for every tile in map
     for (int i = 0; i < MAP_HEIGHT; i++)
@@ -58,16 +58,14 @@ void draw_player()
 // Draw 3D ray projection
 void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coordinate, bool shade)
 {
-    // actual column in screen space to draw this ray in
-    int x_screen = x + WINDOW_WIDTH / 2;
+    // ray projection length, in pixels
     int ray_length_screen = SCALE / ray_length;
-
-    // beginning of this ray in screen space
+    // beginning of ray projection in screen space, y coordinate
     float ray_y_begin = GAME_HEIGHT / 2 - ray_length_screen / 2;
 
     set_color(THREE_D_CEILING_AND_FLOOR_COLOR);
-    SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, ray_y_begin);  // draw ceiling
-    SDL_RenderDrawLine(renderer, x_screen, ray_y_begin + ray_length_screen, x_screen, GAME_HEIGHT);  // draw floor
+    SDL_RenderDrawLine(renderer, x, 0, x, ray_y_begin);                                // draw ceiling
+    SDL_RenderDrawLine(renderer, x, ray_y_begin + ray_length_screen, x, GAME_HEIGHT);  // draw floor
 
     // texture to use with this ray
     const ppm_image_t *texture = textures[wall];
@@ -83,18 +81,7 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coo
         if (shade) texture_pixel = scale_color_by_scalar(texture_pixel, SHADE_CONSTANT);
         float ray_y_end = ray_y_begin + pixel_height;
         set_color(texture_pixel);
-        SDL_RenderDrawLine(renderer, x_screen, ray_y_begin, x_screen, ray_y_end);
+        SDL_RenderDrawLine(renderer, x, ray_y_begin, x, ray_y_end);
         ray_y_begin = ray_y_end;
     }
-}
-
-// Draw 2D ray
-void draw_ray_2d(vec2f ray)
-{
-    set_color(TWO_D_RAY_COLOR);
-    SDL_RenderDrawLine(renderer,
-                       player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
 }
