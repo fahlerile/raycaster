@@ -1,4 +1,6 @@
+#include <math.h>
 #include <SDL2/SDL.h>
+
 #include "draw.h"
 #include "sdl_utils/sdl_utils.h"
 #include "ppm_loader/ppm_loader.h"
@@ -61,7 +63,7 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coo
     int ray_length_screen = SCALE / ray_length;
 
     // beginning of this ray in screen space
-    int ray_y_begin = GAME_HEIGHT / 2 - ray_length_screen / 2;
+    float ray_y_begin = GAME_HEIGHT / 2 - ray_length_screen / 2;
 
     set_color(THREE_D_CEILING_AND_FLOOR_COLOR);
     SDL_RenderDrawLine(renderer, x_screen, 0, x_screen, ray_y_begin);  // draw ceiling
@@ -70,7 +72,7 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coo
     // texture to use with this ray
     const ppm_image_t *texture = textures[wall];
     // how much pixels in the screen does one pixel in the texture occupy
-    int pixel_height = ray_length_screen / texture->height;
+    float pixel_height = (float) ray_length_screen / texture->height;
     // determine what column of the texture to draw on the screen
     int texture_column = hit_in_sq_coordinate * texture->width;
 
@@ -79,7 +81,7 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coo
     {
         color_t texture_pixel = texture->data[ppm_x_y_to_index(texture_column, i, texture->width)];  // get pixel from the texture
         if (shade) texture_pixel = scale_color_by_scalar(texture_pixel, SHADE_CONSTANT);
-        int ray_y_end = ray_y_begin + pixel_height;
+        float ray_y_end = ray_y_begin + pixel_height;
         set_color(texture_pixel);
         SDL_RenderDrawLine(renderer, x_screen, ray_y_begin, x_screen, ray_y_end);
         ray_y_begin = ray_y_end;

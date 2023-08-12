@@ -4,10 +4,7 @@ My simple raycaster engine written in C.
 
 # TODO
 
-- Textures
-    - [x] PPM image loader
-    - [x] Map integers in the map to ppm textures
-    - [x] Get exact in-square coordinate of ray hitting the wall to draw the texture, pass it to 3D ray drawing function
-    - Draw vertical line in 3D ray drawing function according to the texture
 - Comment the code well
+- Hide 2D map (show it if M was pressed, add ability to turn this feature off if `DEBUG` macros is not defined)
+- Make different textures appear differently on map
 - Create a simple game
