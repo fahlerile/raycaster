@@ -13,16 +13,22 @@ extern const unsigned int map[MAP_WIDTH * MAP_HEIGHT];
 extern const ppm_image_t *textures[];
 extern player_t player;
 
+// Draw 2D map
 void draw_map()
 {
+    // for every tile in map
     for (int i = 0; i < MAP_HEIGHT; i++)
     {
         for (int j = 0; j < MAP_WIDTH; j++)
         {
+            // determine the tile it is
             int wall = map[j * MAP_HEIGHT + i];
+
+            // if it is 0, set TWO_D_MAP_ZERO_COLOR, else set TWO_D_MAP_BLOCK_COLOR as color
             color_t color = (wall == 0) ? TWO_D_MAP_ZERO_COLOR : TWO_D_MAP_BLOCK_COLOR;
             set_color(color);
 
+            // draw the tile as square
             SDL_Rect square = {
                 i * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
                 j * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
@@ -34,9 +40,12 @@ void draw_map()
     }
 }
 
+// Draw 2D player
 void draw_player()
 {
     set_color(TWO_D_PLAYER_COLOR);
+
+    // draw player as rectangle
     SDL_Rect player_rect = {
         player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - TWO_D_PLAYER_SIZE / 2,
         player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE) - TWO_D_PLAYER_SIZE / 2,
@@ -46,16 +55,7 @@ void draw_player()
     SDL_RenderFillRect(renderer, &player_rect);
 }
 
-void draw_ray_2d(vec2f ray)
-{
-    set_color(TWO_D_RAY_COLOR);
-    SDL_RenderDrawLine(renderer,
-                       player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
-                       ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
-}
-
+// Draw 3D ray projection
 void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coordinate, bool shade)
 {
     // actual column in screen space to draw this ray in
@@ -86,4 +86,15 @@ void draw_ray_3d(int x, float ray_length, unsigned int wall, float hit_in_sq_coo
         SDL_RenderDrawLine(renderer, x_screen, ray_y_begin, x_screen, ray_y_end);
         ray_y_begin = ray_y_end;
     }
+}
+
+// Draw 2D ray
+void draw_ray_2d(vec2f ray)
+{
+    set_color(TWO_D_RAY_COLOR);
+    SDL_RenderDrawLine(renderer,
+                       player.pos.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+                       player.pos.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+                       ray.x * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE),
+                       ray.y * (MAP_SQUARE_SIZE + MAP_BORDER_SIZE));
 }

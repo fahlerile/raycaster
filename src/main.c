@@ -15,11 +15,15 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event event;
 
+// initial position of the player
 player_t player = {{5.5f, 8.5f}, 0.0f};
+
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "maps/map.txt"
 };
-ppm_image_t *textures[NUM_TEXTURES + 1] = { NULL };  // 0th texture is reserved to avoid ambiguity
+
+// 0th texture is reserved to avoid ambiguity
+ppm_image_t *textures[NUM_TEXTURES + 1] = { NULL };
 
 int main(int argc, char **argv)
 {
@@ -35,8 +39,10 @@ int main(int argc, char **argv)
     int this_frame_time = 0;
     int delta_time = 0;
 
+    // initialize SDL window and renderer objects
     init(&window, &renderer);
 
+    // main loop
     while (running)
     {
         this_frame_time = SDL_GetTicks();
@@ -44,6 +50,7 @@ int main(int argc, char **argv)
 
         poll_events(delta_time);
 
+        // clear the screen
         set_color((color_t) {0, 0, 0, 255});
         SDL_RenderClear(renderer);
 
@@ -51,14 +58,17 @@ int main(int argc, char **argv)
         draw_player();
         cast_rays();
 
+        // swap buffers
         SDL_RenderPresent(renderer);
 
         prev_frame_time = this_frame_time;
     }
 
+    // free textures from memory
     for (int i = 1; i < (NUM_TEXTURES + 1); i++)
         free_ppm_image(textures[i]);
 
+    // uninitialize SDL renderer and window
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
