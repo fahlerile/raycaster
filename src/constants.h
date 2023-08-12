@@ -14,20 +14,20 @@
 #define RENDERER_FLAGS SDL_RENDERER_PRESENTVSYNC
 
 // MAP CONSTANTS
-#define MAP_WIDTH 20   // max width of the map, in tiles
-#define MAP_HEIGHT 20  // max height of the map, in tiles
+#define MAP_WIDTH 64   // max width of the map, in tiles
+#define MAP_HEIGHT 64  // max height of the map, in tiles
 
 // 2D MAP & PLAYER CONSTANTS
-#define MAP_SQUARE_SIZE 25    // pixels
+#define MAP_SQUARE_SIZE 5    // pixels
 #define MAP_BORDER_SIZE 0     // pixels
-#define TWO_D_PLAYER_SIZE 10  // pixels
+#define TWO_D_PLAYER_SIZE 5  // pixels
 #define TWO_D_MAP_ZERO_COLOR (color_t) {255, 255, 255, 255}   // color of empty space in 2d map
 #define TWO_D_MAP_BLOCK_COLOR (color_t) {0, 0, 0, 255}  // color of some block in 2d map
 #define TWO_D_PLAYER_COLOR (color_t) {255, 0, 0, 255}         // player color in 2d map
 #define TWO_D_RAY_COLOR (color_t) {0, 0, 0, 255}              // ray color in 2d map
 
 // 3D PLAYER CONSTANTS
-#define PLAYER_ANGLE_DELTA 1.0f  // speed of player's view angle, in degrees
+#define PLAYER_ANGLE_DELTA 3.0f  // speed of player's view angle, in degrees
 #define FOV 60                   // degrees
 #define PLAYER_SPEED 0.01f       // player's movement speed, arbitrary measure unit
 
@@ -37,7 +37,7 @@
 #define SCALE 700            // reverse proportionality constant, used in 3d rendering
                              // (700 is optimal value for your tiles to be similar to squares)
 #define SHADE_CONSTANT 0.8f  // by what scalar should color be multiplied to achieve "shading" effect
-#define THREE_D_CEILING_AND_FLOOR_COLOR (color_t) {200, 200, 200, 255}
+#define THREE_D_CEILING_AND_FLOOR_COLOR (color_t) {95, 95, 95, 255}
 
 // ERROR CODES
 #define ERROR_CODE_SDL_INITIALIZATION 1

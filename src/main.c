@@ -19,10 +19,10 @@ SDL_Renderer* renderer;
 SDL_Event event;
 
 // initial position of the player
-player_t player = {{5.5f, 8.5f}, 0.0f};
+player_t player = {{3, 3}, 0.0f};
 
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
-    #include "maps/map.txt"
+    #include "maps/floor_0.txt"
 };
 
 // 0th texture is reserved to avoid ambiguity
