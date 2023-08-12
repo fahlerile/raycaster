@@ -1,7 +1,7 @@
 #ifndef PPM_LOADER_H
 #define PPM_LOADER_H
 
-#include "typedefs.h"
+#include "color.h"
 
 #define ppm_x_y_to_index(x, y, width) (y * width + x)
 

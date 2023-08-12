@@ -1,7 +1,7 @@
 #ifndef HELPER_FUNCTIONS_H
 #define HELPER_FUNCTIONS_H
 
-#include "typedefs.h"
+#include "color.h"
 
 void init(SDL_Window **window, SDL_Renderer **renderer);
 void poll_events(int delta_time);

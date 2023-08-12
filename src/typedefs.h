@@ -14,12 +14,4 @@ typedef struct
     float angle;
 } player_t;
 
-typedef struct
-{
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
-} color_t;
-
 #endif  // #ifndef TYPEDEFS_H

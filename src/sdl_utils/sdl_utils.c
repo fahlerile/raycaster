@@ -7,6 +7,7 @@
 #include "raycaster/raycaster.h"
 #include "constants.h"
 #include "typedefs.h"
+#include "color.h"
 #include "utils.h"
 
 extern bool running;

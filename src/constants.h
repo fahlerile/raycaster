@@ -17,6 +17,8 @@
 #define MAP_SQUARE_SIZE 24
 #define MAP_BORDER_SIZE 1
 #define TWO_D_PLAYER_SIZE 10
+#define TWO_D_MAP_ZERO_COLOR (color_t) {255, 255, 255, 255}
+#define TWO_D_MAP_BLOCK_COLOR (color_t) {100, 100, 100, 255}
 #define TWO_D_PLAYER_COLOR (color_t) {255, 0, 0, 255}
 #define TWO_D_RAY_COLOR (color_t) {0, 0, 0, 255}
 
@@ -39,5 +41,6 @@
 
 // OTHER
 #define MAX_PPM_SIZE_BYTES 16384
+#define NUM_TEXTURES 1
 
 #endif  // #ifndef CONSTANTS_H

@@ -19,43 +19,48 @@ player_t player = {{7.25f, 7.5f}, 200.0f};
 const unsigned int map[MAP_WIDTH * MAP_HEIGHT] = {
     #include "maps/map.txt"
 };
-const color_t colors[] = {
-    #include "maps/colors.txt"
-};
+ppm_image_t *textures[NUM_TEXTURES + 1] = { NULL };  // 0th texture is reserved to avoid ambiguity
 
 int main(int argc, char **argv)
 {
-    ppm_image_t *stone_wall = load_ppm_image("res/stone_wall.ppm");
-    free_ppm_image(stone_wall);
+    // load textures
+    const char *textures_paths[NUM_TEXTURES] = {
+        #include "maps/textures.txt"
+    };
+    for (int i = 1; i < (NUM_TEXTURES + 1); i++)
+        textures[i] = load_ppm_image(textures_paths[i - 1]);
 
-    // // milliseconds
-    // int prev_frame_time = 0;
-    // int this_frame_time = 0;
-    // int delta_time = 0;
+    // frametimes are in milliseconds
+    int prev_frame_time = 0;
+    int this_frame_time = 0;
+    int delta_time = 0;
 
-    // init(&window, &renderer);
+    init(&window, &renderer);
 
-    // while (running)
-    // {
-    //     this_frame_time = SDL_GetTicks();
-    //     delta_time = this_frame_time - prev_frame_time;
+    while (running)
+    {
+        this_frame_time = SDL_GetTicks();
+        delta_time = this_frame_time - prev_frame_time;
 
-    //     poll_events(delta_time);
+        poll_events(delta_time);
 
-    //     set_color((color_t) {0, 0, 0, 255});
-    //     SDL_RenderClear(renderer);
+        set_color((color_t) {0, 0, 0, 255});
+        SDL_RenderClear(renderer);
 
-    //     draw_map();
-    //     draw_player();
-    //     cast_rays();
+        draw_map();
+        draw_player();
+        cast_rays();
 
-    //     SDL_RenderPresent(renderer);
+        SDL_RenderPresent(renderer);
 
-    //     prev_frame_time = this_frame_time;
-    // }
+        prev_frame_time = this_frame_time;
+    }
 
-    // SDL_DestroyRenderer(renderer);
-    // SDL_DestroyWindow(window);
-    // SDL_Quit();
-    // return 0;
+    for (int i = 1; i < (NUM_TEXTURES + 1); i++)
+        free_ppm_image(textures[i]);
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
 }

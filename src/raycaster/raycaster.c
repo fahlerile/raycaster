@@ -44,12 +44,13 @@ void cast_rays()
         unsigned int wall_v;
         cast_vertical_ray(ray_angle, tan_theta, in_sq_x, &v_ray, &wall_v, &ignore_v);
 
-        // both rays were ignored from calculations, this is undefined behaviour
-        assert((ignore_h == false) && (ignore_v == false));
+        // if both rays were ignored from calculations, this is undefined behaviour
+        assert((ignore_h == false) || (ignore_v == false));
 
         // choose which ray to use (the one with shorter length if no ignores)
         vec2f ray;
         float ray_length;
+        float hit_in_sq_coordinate;  // for textures
         unsigned int wall;
         bool shade = false;
 
@@ -58,6 +59,7 @@ void cast_rays()
             ray = v_ray;
             ray_length = sqrt(pow(player.pos.x - v_ray.x, 2) + pow(player.pos.y - v_ray.y, 2));
             wall = wall_v;
+            hit_in_sq_coordinate = decimal_part(ray.y);
             shade = true;
         }
         else if (ignore_v)
@@ -65,6 +67,7 @@ void cast_rays()
             ray = h_ray;
             ray_length = sqrt(pow(player.pos.x - h_ray.x, 2) + pow(player.pos.y - h_ray.y, 2));
             wall = wall_h;
+            hit_in_sq_coordinate = decimal_part(ray.x);
         }
         else  // no ignores (or both are ignored, but this will not happen )
         {
@@ -76,6 +79,7 @@ void cast_rays()
                 ray = v_ray;
                 ray_length = v_ray_length;
                 wall = wall_v;
+                hit_in_sq_coordinate = decimal_part(ray.y);
                 shade = true;
             }
             else
@@ -83,13 +87,14 @@ void cast_rays()
                 ray = h_ray;
                 ray_length = h_ray_length;
                 wall = wall_h;
+                hit_in_sq_coordinate = decimal_part(ray.x);
             }
         }
 
         // fisheye fix
         float alpha = player.angle - ray_angle;
         float adj_length = ray_length * cos(to_radians(alpha));
-        draw_ray_3d(x, adj_length, wall, shade);
+        draw_ray_3d(x, adj_length, wall, hit_in_sq_coordinate, shade);
         draw_ray_2d(ray);
 
         ray_angle += d_angle;

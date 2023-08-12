@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <assert.h>
 
 #include "ppm_loader.h"
-#include "typedefs.h"
+#include "color.h"
 #include "constants.h"
 
 ppm_image_t* load_ppm_image(const char *path)
