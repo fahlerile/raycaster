@@ -151,7 +151,7 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
     // if not, "extend" the ray in while loop until it hits some wall
     // subtracting map width from index because it skips 1 block if NOT facing positive `y`
     int index = (ray_facing_pos_y) ? to_index(ray) : to_index(ray) - MAP_WIDTH;
-    if (is_oob(index) || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
+    if (is_oob(index, ray))
     {
         ignore_ray = true;
         goto skip_horizontal;
@@ -165,7 +165,7 @@ void cast_horizontal_ray(float ray_angle, float tan_theta, float in_sq_y,
 
         // check if hit the wall
         index = (ray_facing_pos_y) ? to_index(ray) : to_index(ray) - MAP_WIDTH;
-        if (is_oob(index) || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
+        if (is_oob(index, ray))
         {
             ignore_ray = true;
             goto skip_horizontal;
@@ -221,7 +221,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
     // if not, "extend" the ray in while loop until it hits some wall
     // subtracting 1 from index because it skips 1 block if NOT facing positive `x`
     int index = (ray_facing_pos_x) ? to_index(ray) : to_index(ray) - 1;
-    if (is_oob(index) || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
+    if (is_oob(index, ray))
     {
         ignore_ray = true;
         goto skip_vertical;
@@ -236,7 +236,7 @@ void cast_vertical_ray(float ray_angle, float tan_theta, float in_sq_x,
         // check if hit the wall
         // subtracting map width because it skips 1 block if facing negative y
         index = (ray_facing_pos_x) ? to_index(ray) : to_index(ray) - 1;
-        if (is_oob(index) || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
+        if (is_oob(index, ray))
         {
             ignore_ray = true;
             goto skip_vertical;

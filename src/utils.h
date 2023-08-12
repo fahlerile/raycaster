@@ -13,6 +13,6 @@
 #define to_index(vec) (floor(vec.y) * MAP_WIDTH + floor(vec.x))
 
 // Determine if the index is out-of-bounds of map
-#define is_oob(x) (x < 0 || x > MAP_WIDTH * MAP_HEIGHT)
+#define is_oob(index, ray) (index < 0 || index > MAP_WIDTH * MAP_HEIGHT || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
 
 #endif
