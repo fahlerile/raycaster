@@ -1,4 +1,0 @@
-// List of textures to be loaded
-// Should be in quotes
-// 1-base indexing!
-"res/stone_wall.ppm"
