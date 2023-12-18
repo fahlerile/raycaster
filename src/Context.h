@@ -8,6 +8,8 @@ typedef struct
     Renderer* renderer;
     SDL_Event event;
     bool running;
+    Player player;
+    Map map;
 } Context;
 
 void constructContext();

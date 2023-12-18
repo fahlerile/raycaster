@@ -1,14 +1,11 @@
 # raycaster
 
-My simple raycaster engine written in C.
+A raycaster engine written in C. End goal - a simple game.
 
-# TODO
+## TODO
+- [ ] Add player and map construction
+- [ ] Add map loading from file
+- [ ] Implement `castAndDrawRays` for "air" and colored `Block`'s
+- [ ] Add event reaction (`updateContext`) (movement, look around, etc.)
+- [ ] Add textured `Block`'s
 
-- Create a simple game
-    - Add GUI
-    - Add a gun to kill enemies
-    - Ability to move between "floors" (maps)
-    - Add enemies, other entities (pick-ups) as sprites
-    - Create a couple of levels (maximum five)
-    - Some final boss?
-    - Congratulation screen for the player
