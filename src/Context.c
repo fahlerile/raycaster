@@ -1,6 +1,11 @@
+#include "radians.h"
 #include <stdlib.h>
-#include "errorcodes.h"
+#include "Player.h"
+#include "Map.h"
 #include "Context.h"
+#include "errorcodes.h"
+
+#define MAP_FILENAME "res/maps/1.map"
 
 void constructContext()
 {
@@ -23,6 +28,21 @@ void constructContext()
         fprintf(stderr, "Failed to initialize SDL window or/and renderer: %s\n", SDL_GetError());
         exit(SDL_RENDERER_OR_WINDOW_FAIL);
     }
+
+    context.map = newMapFromFile(
+        MAP_FILENAME,
+        &context.textures,
+        &context.blocks
+    );
+
+    context.player = (Player) {
+        .position = (Vector2d) {
+            context.map->defaultPlayerPosition.x,
+            context.map->defaultPlayerPosition.y
+        },
+        .seeAngle = radians(0),
+        .FOV = radians(60)
+    };
 }
 
 void destructContext()

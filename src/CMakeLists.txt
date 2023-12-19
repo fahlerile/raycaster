@@ -4,6 +4,8 @@ set(
 
     Context.c
     Renderer.c
+    Map.c
+    Texture.c
 )
 
 add_executable(${EXECUTABLE_NAME} ${SOURCES})

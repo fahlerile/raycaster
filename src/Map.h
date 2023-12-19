@@ -1,11 +1,9 @@
 #pragma once
 #include <stddef.h>
-
-typedef struct
-{
-    size_t width, height;
-    Block* data;
-} Map;
+#include "DynamicArray/DynamicArray.h"
+#include "Color/Color.h"
+#include "Vector/Vector2.h"
+#include "Texture.h"
 
 typedef enum
 {
@@ -21,6 +19,15 @@ typedef struct
     {
         Color color;
         Texture* texture;
-    }
+    };
 } Block;
+
+typedef struct
+{
+    Vector2i dimensions;
+    Vector2d defaultPlayerPosition;
+    DynamicArray* data;  // Block*
+} Map;
+
+Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray** blocks);
 

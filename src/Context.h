@@ -2,6 +2,8 @@
 
 #include <SDL2/SDL.h>
 #include "Renderer.h"
+#include "Player.h"
+#include "Map.h"
 
 typedef struct
 {
@@ -9,7 +11,9 @@ typedef struct
     SDL_Event event;
     bool running;
     Player player;
-    Map map;
+    Map* map;
+    DynamicArray* textures;  // Texture*
+    DynamicArray* blocks;    // Block
 } Context;
 
 void constructContext();

@@ -1,7 +1,9 @@
 #define SDL_MAIN_HANDLED
+#define STB_IMAGE_IMPLEMENTATION
 
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include "stb_image.h"
 #include "Renderer.h"
 #include "Context.h"
 
