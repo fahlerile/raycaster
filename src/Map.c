@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <assert.h>
-#include <stddef.h>
 #include <string.h>
 #include "memoryUtils/memoryUtils.h"
 #include "fileUtils/fileUtils.h"
 #include "stringUtils/stringUtils.h"
+#include "utils.h"
 #include "stb_image.h"
 #include "Map.h"
 
@@ -97,5 +96,10 @@ Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray*
     };
 
     return this;
+}
+
+Block* getBlockAtPosition(Map* this, Vector2i position)
+{
+    return *(Block**) indexDynamicArray(this->data, TWO_D_ROW_MAJOR_ARRAY_INDEX_TO_1D_INDEX(position, this->dimensions));
 }
 

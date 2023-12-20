@@ -1,9 +1,10 @@
-#include "radians.h"
+#include "utils.h"
 #include <stdlib.h>
 #include "Player.h"
 #include "Map.h"
 #include "Context.h"
 #include "errorcodes.h"
+#include "constants.h"
 
 #define MAP_FILENAME "res/maps/1.map"
 
@@ -16,7 +17,7 @@ void constructContext()
     }
 
     context = (Context) {
-        .renderer = newRenderer(800, 600, 0),
+        .renderer = newRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0),
         .event = {0},
         .running = true
     };
@@ -40,8 +41,8 @@ void constructContext()
             context.map->defaultPlayerPosition.x,
             context.map->defaultPlayerPosition.y
         },
-        .seeAngle = radians(0),
-        .FOV = radians(60)
+        .seeAngle = RADIANS(0),
+        .FOV = RADIANS(60)
     };
 }
 

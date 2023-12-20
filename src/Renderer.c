@@ -27,6 +27,8 @@ Renderer* newRenderer(int width, int height, int flags)
 
 void freeRenderer(Renderer* this)
 {
+    SDL_DestroyRenderer(this->internal_renderer);
+    SDL_DestroyWindow(this->internal_window);
     xfree(this);
 }
 
@@ -47,6 +49,12 @@ void rendererDrawPixel(Renderer* this, Vector2i point, Color color)
 {
     rendererSetDrawColor(this, color);
     SDL_RenderDrawPoint(this->internal_renderer, point.x, point.y);
+}
+
+void rendererDrawLine(Renderer* this, Vector2i p1, Vector2i p2, Color color)
+{
+    rendererSetDrawColor(this, color);
+    SDL_RenderDrawLine(this->internal_renderer, p1.x, p1.y, p2.x, p2.y);
 }
 
 // @brief Save current buffer state as BMP
