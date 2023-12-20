@@ -2,9 +2,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stdbool.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 #include "stb_image.h"
 #include "Renderer.h"
+#include "cast.h"
 #include "Context.h"
 
 Context context;
@@ -18,15 +20,14 @@ int main(int argc, char** argv)
     SDL_SetMainReady();
     constructContext();
 
+    castAndDrawRays();
     while (context.running)
     {
         pollEvents();
         updateContext();
-        castAndDrawRays();
         rendererSwapBuffer(context.renderer);
     }
 
-    destructContext();
     return 0;
 }
 
@@ -40,11 +41,6 @@ void pollEvents()
 }
 
 void updateContext()
-{
-
-}
-
-void castAndDrawRays()
 {
 
 }
