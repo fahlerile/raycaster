@@ -68,6 +68,7 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
 
     Vector2d rayPosition = context.player.position;
     double tanSeeAngle = tan(seeAngle);
+    double tanPiMinusSeeAngle = tan(M_PI - seeAngle);
     double tan2PiMinusSeeAngle = tan(2*M_PI - seeAngle);
     double delta;
 
@@ -87,10 +88,14 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
     else  // RayTypeVertical
     {
         double decimalPartRayPositionX = DECIMAL_PART(rayPosition.x);
-        double increment = (1 - decimalPartRayPositionX) * tanSeeAngle;
-        delta = tanSeeAngle;
+        double increment = (angleFacingNegX) ?
+            decimalPartRayPositionX * tanPiMinusSeeAngle :
+            (1 - decimalPartRayPositionX) * tanSeeAngle;
+        delta = (angleFacingNegX) ?
+            tanPiMinusSeeAngle :
+            tanSeeAngle;
 
-        rayPosition.x += (1 - decimalPartRayPositionX);
+        rayPosition.x += (angleFacingNegX) ? -decimalPartRayPositionX : (1 - decimalPartRayPositionX);
         rayPosition.y += increment;
     }
     
@@ -101,7 +106,7 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
         (block = getBlockAtPosition(  // block == air
             context.map,
             (Vector2i) {
-                floor(rayPosition.x), 
+                (angleFacingNegX && type == RayTypeVertical) ? floor(rayPosition.x) - 1 : floor(rayPosition.x), 
                 (angleFacingNegY && type == RayTypeHorizontal) ? floor(rayPosition.y) - 1 : floor(rayPosition.y), 
             }
         ))->type == BlockTypeAir
@@ -114,7 +119,7 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
         }
         else  // RayTypeVertical
         {
-            rayPosition.x += 1;
+            rayPosition.x += (angleFacingNegX) ? -1 : 1;
             rayPosition.y += delta;
         }
     }
