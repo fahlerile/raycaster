@@ -63,18 +63,26 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
         return;
     }
 
+    bool angleFacingNegY = IS_ANGLE_IN_QUADRANT(seeAngle, 3) || IS_ANGLE_IN_QUADRANT(seeAngle, 4);
+    bool angleFacingNegX = IS_ANGLE_IN_QUADRANT(seeAngle, 2) || IS_ANGLE_IN_QUADRANT(seeAngle, 3);
+
     Vector2d rayPosition = context.player.position;
     double tanSeeAngle = tan(seeAngle);
+    double tan2PiMinusSeeAngle = tan(2*M_PI - seeAngle);
     double delta;
 
     if (type == RayTypeHorizontal)
     {
         double decimalPartRayPositionY = DECIMAL_PART(rayPosition.y);
-        double increment = (1 - decimalPartRayPositionY) / tanSeeAngle;
-        delta = 1 / tanSeeAngle;
+        double increment = (angleFacingNegY) ?
+            decimalPartRayPositionY / tan2PiMinusSeeAngle :
+            (1 - decimalPartRayPositionY) / tanSeeAngle;
+        delta = (angleFacingNegY) ?
+            1 / tan2PiMinusSeeAngle :
+            1 / tanSeeAngle;
 
         rayPosition.x += increment;
-        rayPosition.y += (1 - decimalPartRayPositionY);
+        rayPosition.y += (angleFacingNegY) ? -decimalPartRayPositionY : (1 - decimalPartRayPositionY);
     }
     else  // RayTypeVertical
     {
@@ -93,8 +101,8 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
         (block = getBlockAtPosition(  // block == air
             context.map,
             (Vector2i) {
-                (int) floor(rayPosition.x), 
-                (int) floor(rayPosition.y)
+                floor(rayPosition.x), 
+                (angleFacingNegY && type == RayTypeHorizontal) ? floor(rayPosition.y) - 1 : floor(rayPosition.y), 
             }
         ))->type == BlockTypeAir
     )
@@ -102,7 +110,7 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
         if (type == RayTypeHorizontal)
         {
             rayPosition.x += delta;
-            rayPosition.y += 1;
+            rayPosition.y += (angleFacingNegY) ? -1 : 1;
         }
         else  // RayTypeVertical
         {

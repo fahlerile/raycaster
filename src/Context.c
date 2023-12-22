@@ -41,7 +41,7 @@ void constructContext()
             context.map->defaultPlayerPosition.x,
             context.map->defaultPlayerPosition.y
         },
-        .seeAngle = RADIANS(0),
+        .seeAngle = RADIANS(context.map->defaultPlayerSeeAngle),
         .FOV = RADIANS(60)
     };
 }
