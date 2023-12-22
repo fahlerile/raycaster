@@ -1,6 +1,6 @@
 #pragma once
-#include <stddef.h>
 #include "Vector/Vector2.h"
+#include "Color/Color.h"
 
 typedef struct
 {
@@ -11,4 +11,6 @@ typedef struct
 
 Texture* newTexture(const char* filename, int desiredNChannels);
 void freeTexture(Texture* this);
+
+Color textureGetPixelAtPosition(Texture* this, Vector2i position);
 

@@ -1,3 +1,5 @@
+#include "Renderer.h"
+#include "Vector/Vector2.h"
 #include "utils.h"
 #include <stddef.h>
 #include "Context.h"
@@ -20,11 +22,11 @@ void castAndDrawRays()
         castHorizontalAndVerticalRaysAndReturnShorter(
             seeAngle, &length, &hitPosition, &type, &hitBlock
         );
-        drawRay(col, length, type, hitBlock);
+        drawRay(col, length, type, hitPosition, hitBlock);
     }
 }
 
-void castHorizontalAndVerticalRaysAndReturnShorter(
+static void castHorizontalAndVerticalRaysAndReturnShorter(
     double seeAngle, double* length, Vector2d* hitPosition, RayType* type, Block** hitBlock
 )
 {
@@ -53,7 +55,7 @@ void castHorizontalAndVerticalRaysAndReturnShorter(
     }
 }
 
-void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBlock)
+static void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBlock)
 {
     if (type != RayTypeHorizontal && type != RayTypeVertical)
     {
@@ -67,43 +69,18 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
     bool angleFacingNegX = IS_ANGLE_IN_QUADRANT(seeAngle, 2) || IS_ANGLE_IN_QUADRANT(seeAngle, 3);
 
     Vector2d rayPosition = context.player.position;
-    double tanSeeAngle = tan(seeAngle);
-    double tanPiMinusSeeAngle = tan(M_PI - seeAngle);
-    double tan2PiMinusSeeAngle = tan(2*M_PI - seeAngle);
     double delta;
-
-    if (type == RayTypeHorizontal)
-    {
-        double decimalPartRayPositionY = DECIMAL_PART(rayPosition.y);
-        double increment = (angleFacingNegY) ?
-            decimalPartRayPositionY / tan2PiMinusSeeAngle :
-            (1 - decimalPartRayPositionY) / tanSeeAngle;
-        delta = (angleFacingNegY) ?
-            1 / tan2PiMinusSeeAngle :
-            1 / tanSeeAngle;
-
-        rayPosition.x += increment;
-        rayPosition.y += (angleFacingNegY) ? -decimalPartRayPositionY : (1 - decimalPartRayPositionY);
-    }
-    else  // RayTypeVertical
-    {
-        double decimalPartRayPositionX = DECIMAL_PART(rayPosition.x);
-        double increment = (angleFacingNegX) ?
-            decimalPartRayPositionX * tanPiMinusSeeAngle :
-            (1 - decimalPartRayPositionX) * tanSeeAngle;
-        delta = (angleFacingNegX) ?
-            tanPiMinusSeeAngle :
-            tanSeeAngle;
-
-        rayPosition.x += (angleFacingNegX) ? -decimalPartRayPositionX : (1 - decimalPartRayPositionX);
-        rayPosition.y += increment;
-    }
+    calculateDeltaAndSnapRayToGrid(
+        type, seeAngle, 
+        angleFacingNegX, angleFacingNegY, 
+        &delta, &rayPosition
+    );
     
     Block* block;
     while (
         0 < rayPosition.x && rayPosition.x < context.map->dimensions.x &&  // not OOB
         0 < rayPosition.y && rayPosition.y < context.map->dimensions.y &&
-        (block = getBlockAtPosition(  // block == air
+        (block = getBlockAtPosition(  // block stumbled upon == air
             context.map,
             (Vector2i) {
                 (angleFacingNegX && type == RayTypeVertical) ? floor(rayPosition.x) - 1 : floor(rayPosition.x), 
@@ -129,14 +106,51 @@ void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBl
     return;
 }
 
-void drawRay(size_t col, double length, RayType rayType, Block* hitBlock)
+static void calculateDeltaAndSnapRayToGrid(
+    RayType type, double seeAngle,
+    double angleFacingNegX, double angleFacingNegY,
+    double* delta, Vector2d* rayPosition
+)
+{
+    double tanSeeAngle = tan(seeAngle);
+    double tanPiMinusSeeAngle = tan(M_PI - seeAngle);
+    double tan2PiMinusSeeAngle = tan(2*M_PI - seeAngle);
+
+    if (type == RayTypeHorizontal)
+    {
+        double decimalPartRayPositionY = DECIMAL_PART(rayPosition->y);
+        double increment = (angleFacingNegY) ?
+            decimalPartRayPositionY / tan2PiMinusSeeAngle :
+            (1 - decimalPartRayPositionY) / tanSeeAngle;
+        *delta = (angleFacingNegY) ?
+            1 / tan2PiMinusSeeAngle :
+            1 / tanSeeAngle;
+
+        rayPosition->x += increment;
+        rayPosition->y += (angleFacingNegY) ? -decimalPartRayPositionY : (1 - decimalPartRayPositionY);
+    }
+    else  // RayTypeVertical
+    {
+        double decimalPartRayPositionX = DECIMAL_PART(rayPosition->x);
+        double increment = (angleFacingNegX) ?
+            decimalPartRayPositionX * tanPiMinusSeeAngle :
+            (1 - decimalPartRayPositionX) * tanSeeAngle;
+        *delta = (angleFacingNegX) ?
+            tanPiMinusSeeAngle :
+            tanSeeAngle;
+
+        rayPosition->x += (angleFacingNegX) ? -decimalPartRayPositionX : (1 - decimalPartRayPositionX);
+        rayPosition->y += increment;
+    }
+}
+
+static void drawRay(size_t col, double length, RayType rayType, Vector2d hitPosition, Block* hitBlock)
 {
     assert(hitBlock->type != BlockTypeAir);
-    assert(hitBlock->type != BlockTypeTextured && "Not implemented"); // TODO
 
-    int lengthOfLine = LINE_LENGTH_PROPORTION_CONSTANT / length;
-    int startOfLine = (WINDOW_HEIGHT - lengthOfLine) / 2;
-    int endOfLine = startOfLine + lengthOfLine;
+    size_t lengthOfLine = LINE_LENGTH_PROPORTION_CONSTANT / length;
+    size_t startOfLine = (WINDOW_HEIGHT - lengthOfLine) / 2;
+    size_t endOfLine = startOfLine + lengthOfLine;
 
     rendererDrawLine(
         context.renderer,
@@ -146,15 +160,33 @@ void drawRay(size_t col, double length, RayType rayType, Block* hitBlock)
     );
     rendererDrawLine(
         context.renderer,
-        (Vector2i) {col, startOfLine},
-        (Vector2i) {col, endOfLine},
-        (rayType == RAY_TYPE_TO_SHADE) ? colorMultiplyByScalar(hitBlock->color, SHADE_CONSTANT) : hitBlock->color
-    );
-    rendererDrawLine(
-        context.renderer,
         (Vector2i) {col, endOfLine},
         (Vector2i) {col, WINDOW_HEIGHT-1},
         FLOOR_COLOR
     );
+    if (hitBlock->type == BlockTypeColored)
+    {
+        rendererDrawLine(
+            context.renderer,
+            (Vector2i) {col, startOfLine},
+            (Vector2i) {col, endOfLine},
+            (rayType == RAY_TYPE_TO_SHADE) ? colorMultiplyByScalar(hitBlock->color, SHADE_CONSTANT) : hitBlock->color
+        );
+    }
+    else  // BlockTypeTextured
+    {
+        int columnOfTexture = DECIMAL_PART((rayType == RayTypeHorizontal) ? hitPosition.x : hitPosition.y) * hitBlock->texture->dimensions.x;
+        double lengthOfTexturePixelProjected = (double) lengthOfLine / hitBlock->texture->dimensions.y;
+        for (int i = 0; i < hitBlock->texture->dimensions.y; i++)
+        {
+            Color color = textureGetPixelAtPosition(hitBlock->texture, (Vector2i) {columnOfTexture, i});
+            rendererDrawLine(
+                context.renderer,
+                (Vector2i) {col, startOfLine + i*lengthOfTexturePixelProjected},
+                (Vector2i) {col, startOfLine + (i+1)*lengthOfTexturePixelProjected},
+                color
+            );
+        }
+    }
 }
 
