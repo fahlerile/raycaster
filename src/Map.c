@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "DynamicArray/DynamicArray.h"
 #include "memoryUtils/memoryUtils.h"
 #include "fileUtils/fileUtils.h"
 #include "stringUtils/stringUtils.h"
@@ -29,8 +30,8 @@ Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray*
     assert(strcmp(line, "MAP\n") == 0);
     
     size_t width, height;
-    double defaultX, defaultY;
-    fscanf(fp, "%zu %zu %lf %lf\n", &width, &height, &defaultX, &defaultY);
+    double defaultX, defaultY, defaultSeeAngle;
+    fscanf(fp, "%zu %zu %lf %lf %lf\n", &width, &height, &defaultX, &defaultY, &defaultSeeAngle);
 
     readLine(&line, &n, fp);
     assert(strcmp(line, "#textures\n") == 0);
@@ -86,6 +87,7 @@ Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray*
                 &(Block**){indexDynamicArray(*blocks, atoi(token))}
             );
         }
+        freeDynamicArray(blockIndices);
     }
 
     xfree(line);
@@ -94,6 +96,7 @@ Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray*
     this->defaultPlayerPosition = (Vector2d) {
         defaultX, defaultY
     };
+    this->defaultPlayerSeeAngle = defaultSeeAngle;
 
     return this;
 }

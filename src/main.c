@@ -2,7 +2,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stdbool.h>
-#include <math.h>
 #include <SDL2/SDL.h>
 #include "stb_image.h"
 #include "Renderer.h"
@@ -21,11 +20,14 @@ int main(int argc, char** argv)
     constructContext();
 
     castAndDrawRays();
+    rendererSwapBuffer(context.renderer);
     while (context.running)
     {
         pollEvents();
         updateContext();
+#ifndef __unix__
         rendererSwapBuffer(context.renderer);
+#endif
     }
 
     return 0;

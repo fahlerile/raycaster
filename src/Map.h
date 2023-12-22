@@ -1,5 +1,4 @@
 #pragma once
-#include <stddef.h>
 #include "DynamicArray/DynamicArray.h"
 #include "Color/Color.h"
 #include "Vector/Vector2.h"
@@ -26,6 +25,7 @@ typedef struct
 {
     Vector2i dimensions;
     Vector2d defaultPlayerPosition;
+    double defaultPlayerSeeAngle;
     DynamicArray* data;  // Block*
 } Map;
 
