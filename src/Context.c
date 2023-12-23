@@ -18,7 +18,7 @@ void constructContext()
     }
 
     context = (Context) {
-        .renderer = newRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_INPUT_GRABBED),
+        .renderer = newRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0),
         .keystate = SDL_GetKeyboardState(NULL),
         .event = {0},
         .running = true

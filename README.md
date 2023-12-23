@@ -15,6 +15,6 @@ A raycaster engine written in C. End goal - a simple game.
 - [x] ~~Refactor/etc. the `.map` file parser~~
 - [x] Add event reaction (`updateContext`) (movement, look around, etc.)
 - [ ] Fix bugs
-    - Incorrect rendering of textures if too close
-    - Random segfaults
+    - [x] Incorrect rendering of textures if too close
+    - [ ] Random segfaults
 

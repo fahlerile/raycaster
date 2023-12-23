@@ -148,9 +148,9 @@ static void drawRay(size_t col, double length, RayType rayType, Vector2d hitPosi
 {
     assert(hitBlock->type != BlockTypeAir);
 
-    size_t lengthOfLine = LINE_LENGTH_PROPORTION_CONSTANT / length;
-    size_t startOfLine = (WINDOW_HEIGHT - lengthOfLine) / 2;
-    size_t endOfLine = startOfLine + lengthOfLine;
+    int lengthOfLine = LINE_LENGTH_PROPORTION_CONSTANT / length;
+    int startOfLine = (WINDOW_HEIGHT - lengthOfLine) / 2;
+    int endOfLine = startOfLine + lengthOfLine;
 
     rendererDrawLine(
         context.renderer,
