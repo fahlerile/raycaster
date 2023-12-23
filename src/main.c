@@ -1,3 +1,5 @@
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #define SDL_MAIN_HANDLED
 #define STB_IMAGE_IMPLEMENTATION
 
@@ -7,43 +9,24 @@
 #include "Renderer.h"
 #include "cast.h"
 #include "Context.h"
+#include "events.h"
 
 Context context;
 
-void pollEvents();
-void updateContext();
-void castAndDrawRays();
-
 int main(int argc, char** argv)
 {
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     SDL_SetMainReady();
     constructContext();
 
-    castAndDrawRays();
-    rendererSwapBuffer(context.renderer);
     while (context.running)
     {
-        pollEvents();
-        updateContext();
-#ifndef __unix__
+        handleEvents();
+        castAndDrawRays();
         rendererSwapBuffer(context.renderer);
-#endif
     }
 
     return 0;
-}
-
-void pollEvents()
-{
-    while (SDL_PollEvent(&context.event) != 0)
-    {
-        if (context.event.type == SDL_QUIT)
-            context.running = false;
-    }
-}
-
-void updateContext()
-{
-
 }
 

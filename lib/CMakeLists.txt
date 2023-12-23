@@ -20,7 +20,7 @@ if(UNIX)
     target_link_libraries(
         ${EXECUTABLE_NAME}
         m
-        )
+    )
 endif()
 
 target_include_directories(

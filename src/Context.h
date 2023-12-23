@@ -9,6 +9,7 @@ typedef struct
 {
     Renderer* renderer;
     SDL_Event event;
+    const Uint8* keystate;
     bool running;
     Player player;
     Map* map;

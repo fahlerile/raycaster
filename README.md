@@ -2,8 +2,6 @@
 
 A raycaster engine written in C. End goal - a simple game.
 
-#
-
 ## TODO
 - [x] Add player and map construction
 - [x] Implement `readMapFromFile` (`.map` file parser)
@@ -14,7 +12,9 @@ A raycaster engine written in C. End goal - a simple game.
     - Splitted something in separate functions
     - Declared a lot of things `static`
 - [x] Add textured `Block`'s rendering
-- [ ] Refactor/etc. the `.map` file parser
-    - [ ] Do not crash if invalid input
-- [ ] Add event reaction (`updateContext`) (movement, look around, etc.)
+- [x] ~~Refactor/etc. the `.map` file parser~~
+- [x] Add event reaction (`updateContext`) (movement, look around, etc.)
+- [ ] Fix bugs
+    - Incorrect rendering of textures if too close
+    - Random segfaults
 

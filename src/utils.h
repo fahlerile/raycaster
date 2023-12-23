@@ -52,3 +52,11 @@ static inline bool IS_ANGLE_IN_QUADRANT(double rad, int quadrantIndex)
     }
 }
 
+static inline double NORMALIZE_RADIANS(double rad)
+{
+    rad = fmod(rad, 2*M_PI);
+    if (rad < 0)
+        rad = 2*M_PI + rad;
+    return rad;
+}
+

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <SDL2/SDL_keyboard.h>
 #include <stdlib.h>
 #include "Player.h"
 #include "Map.h"
@@ -17,7 +18,8 @@ void constructContext()
     }
 
     context = (Context) {
-        .renderer = newRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0),
+        .renderer = newRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_INPUT_GRABBED),
+        .keystate = SDL_GetKeyboardState(NULL),
         .event = {0},
         .running = true
     };

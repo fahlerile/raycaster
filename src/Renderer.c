@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mouse.h>
 #include "memoryUtils/memoryUtils.h"
 #include "Renderer.h"
 
@@ -55,6 +56,11 @@ void rendererDrawLine(Renderer* this, Vector2i p1, Vector2i p2, Color color)
 {
     rendererSetDrawColor(this, color);
     SDL_RenderDrawLine(this->internal_renderer, p1.x, p1.y, p2.x, p2.y);
+}
+
+void rendererMoveMouseInWindow(Renderer* this, Vector2i pos)
+{
+    SDL_WarpMouseInWindow(this->internal_window, pos.x, pos.y);
 }
 
 // @brief Save current buffer state as BMP

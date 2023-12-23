@@ -1,6 +1,7 @@
 set(
     SOURCES
     main.c
+    events.c
     cast.c
 
     Context.c
@@ -21,5 +22,4 @@ else()
         target_link_options(${EXECUTABLE_NAME} PRIVATE -fsanitize=address)
     endif()
 endif()
-
 
