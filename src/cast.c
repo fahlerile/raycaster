@@ -17,7 +17,7 @@ void castAndDrawRays()
     Vector2d hitPosition;
     RayType type;
     Block* hitBlock;
-    for (size_t col = 0; col < cols; col++, seeAngle += deltaSeeAngle)
+    for (size_t col = 0; col < cols; col++, seeAngle = NORMALIZE_RADIANS(seeAngle + deltaSeeAngle))
     {
         castHorizontalAndVerticalRaysAndReturnShorter(
             seeAngle, &length, &hitPosition, &type, &hitBlock
