@@ -1,0 +1,18 @@
+MAP
+5 5 2.055877 3.46456 5.04 
+#textures
+res/textures/oak_planks.png
+res/textures/stone_bricks.png
+#blocks
+0
+1 200 0 0
+1 0 200 0
+1 0 0 200
+2 0
+2 1
+#map
+2,1,4,1,1,
+2,0,0,0,1,
+2,0,0,0,1,
+2,0,0,0,1,
+2,3,3,3,3,

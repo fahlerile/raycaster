@@ -1,18 +1,62 @@
-#ifndef RAYCASTER_UTILS_H
-#define RAYCASTER_UTILS_H
+#pragma once
 
-// Useful macros
-
-// Convert degree angle to radians
-#define to_radians(x) (x * (PI / 180))
-
-// Get decimal part of some number
-#define decimal_part(x) ((double) x - floor(x))
-
-// Get map index from ray vector (used in ray casting functions)
-#define to_index(vec) (floor(vec.y) * MAP_WIDTH + floor(vec.x))
-
-// Determine if the index is out-of-bounds of map
-#define is_oob(index, ray) (index < 0 || index > MAP_WIDTH * MAP_HEIGHT || ray.x > MAP_WIDTH || ray.y > MAP_HEIGHT || ray.x < 0 || ray.y < 0)
-
+#define _USE_MATH_DEFINES
+#include <math.h>
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
 #endif
+#include <stdbool.h>
+#include <stddef.h>
+#include <assert.h>
+#include "Vector/Vector2.h"
+#include "log.h"
+
+#define RADIANS(x) ((M_PI / 180) * (x))
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define DECIMAL_PART(x) ((x) - floor(x))
+
+static inline double EUCLIDEAN_DISTANCE_VECTOR2D(Vector2d a, Vector2d b)
+{
+    Vector2d v = Vector2dSubtract(a, b);
+    return sqrt(v.x * v.x + v.y * v.y);
+}
+
+static inline size_t TWO_D_ROW_MAJOR_ARRAY_INDEX_TO_1D_INDEX(Vector2i position, Vector2i dimensions)
+{
+    assert(0 <= position.x && position.x < dimensions.x);
+    assert(0 <= position.y && position.y < dimensions.y);
+    return (position.y * dimensions.x) + position.x;
+}
+
+// Assumes that angle is positive and lies in [0; 2pi]
+static inline bool IS_ANGLE_IN_QUADRANT(double rad, int quadrantIndex)
+{
+    switch (quadrantIndex)
+    {
+        case 1:
+            return ((rad >= 0 && rad < RADIANS(90)) || rad == RADIANS(360));
+            break;
+        case 2:
+            return (rad >= RADIANS(90) && rad < RADIANS(180));
+            break;
+        case 3:
+            return (rad >= RADIANS(180) && rad < RADIANS(270));
+            break;
+        case 4:
+            return (rad >= RADIANS(270) && rad < RADIANS(360));
+            break;
+        default:
+            LOGE("IS_ANGLE_IN_QUADRANT wrong quadrant index!\n");
+            return false;
+    }
+}
+
+static inline double NORMALIZE_RADIANS(double rad)
+{
+    rad = fmod(rad, 2*M_PI);
+    if (rad < 0)
+        rad = 2*M_PI + rad;
+    return rad;
+}
+
