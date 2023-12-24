@@ -13,5 +13,5 @@
 #define SHADE_CONSTANT 0.8
 
 #define STEP_LENGTH 0.001
-#define MOUSE_SENSITIVITY (M_PI / 500)  // rads per pixel
+#define CAMERA_SENSITIVITY (M_PI / 1500)  // rads per pixel/keypress
 

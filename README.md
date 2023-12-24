@@ -53,6 +53,10 @@ block_index,block_index,...,
     - [x] Fix visual bug when too small angles
     - [x] Random segfaults (I guess I fixed them)
 - [x] Add documentation
+- [x] Fix SEGV bug at angles close to 0/2pi
+- [x] Simultaneous movement (e.g. A+W (forward and left) at the same time)
+- [x] Change camera controls from mouse to keyboard (arrows)
+- [x] Fix yet another SEGV (probably)
 - [ ] Textured floor/ceiling
 - [ ] Entities
 

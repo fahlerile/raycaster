@@ -11,7 +11,7 @@
 
 void castAndDrawRays()
 {
-    double seeAngle = context.player.seeAngle - (context.player.FOV / 2);
+    double seeAngle = NORMALIZE_RADIANS(context.player.seeAngle - (context.player.FOV / 2));
     size_t cols = rendererGetWindowDimensions(context.renderer).x;
     double deltaSeeAngle = context.player.FOV / cols;
 

@@ -12,8 +12,8 @@ typedef enum
 void handleEvents();
 static void handleKeyboardState();
 static void pollEvents();
-static void handleMouseMotion();
 static void handlePlayerMovement();
+static void handleCameraMovement();
 /**
  * Check if player is able to move in specified direction
  * @param direction Direction

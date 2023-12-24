@@ -16,6 +16,7 @@ static void handleKeyboardState()
 {
     SDL_PumpEvents();
     handlePlayerMovement();
+    handleCameraMovement();
 }
 
 static void pollEvents()
@@ -24,24 +25,12 @@ static void pollEvents()
     {
         if (context.event.type == SDL_QUIT)
             context.running = false;
-        else if (context.event.type == SDL_MOUSEMOTION)
-            handleMouseMotion();
     }
-}
-
-static void handleMouseMotion()
-{
-    context.player.seeAngle += context.event.motion.xrel * MOUSE_SENSITIVITY;
-    context.player.seeAngle = NORMALIZE_RADIANS(context.player.seeAngle);
-    rendererMoveMouseInWindow(context.renderer, (Vector2i) {
-        WINDOW_WIDTH / 2,
-        WINDOW_HEIGHT / 2
-    });
 }
 
 static void handlePlayerMovement()
 {
-    // walk vectors, magnitude = STEP_LENGTH
+    // Walk vectors, magnitude = STEP_LENGTH
     Vector2d forwardVector = {
         cos(context.player.seeAngle) * STEP_LENGTH,
         sin(context.player.seeAngle) * STEP_LENGTH
@@ -53,31 +42,50 @@ static void handlePlayerMovement()
 
     Vector2d playerPositionIfMadeMovement;
 
-    if (
-        (context.keystate[SDL_SCANCODE_W] &&
+    // Cant "unite" all of this into a single `if` statement because that would discard the ability to move in multiple direction simultaneously
+    if (context.keystate[SDL_SCANCODE_W] &&
         isPlayerAbleToMoveInDirection(
             Forward, forwardVector,
             rightVector, &playerPositionIfMadeMovement
-        )) ||
-        (context.keystate[SDL_SCANCODE_S] && 
+        ))
+    {
+        context.player.position = playerPositionIfMadeMovement;
+    }
+
+    if (context.keystate[SDL_SCANCODE_S] && 
         isPlayerAbleToMoveInDirection(
             Backward, forwardVector,
             rightVector, &playerPositionIfMadeMovement
-        )) ||
-        (context.keystate[SDL_SCANCODE_A] && 
+        ))
+    {
+        context.player.position = playerPositionIfMadeMovement;
+    }
+
+    if (context.keystate[SDL_SCANCODE_A] && 
         isPlayerAbleToMoveInDirection(
             Left, forwardVector,
             rightVector, &playerPositionIfMadeMovement
-        )) ||
-        (context.keystate[SDL_SCANCODE_D] && 
+        ))
+    {
+        context.player.position = playerPositionIfMadeMovement;
+    }
+
+    if (context.keystate[SDL_SCANCODE_D] && 
         isPlayerAbleToMoveInDirection(
             Right, forwardVector,
             rightVector, &playerPositionIfMadeMovement
         ))
-    )
     {
         context.player.position = playerPositionIfMadeMovement;
     }
+}
+
+static void handleCameraMovement()
+{
+    if (context.keystate[SDL_SCANCODE_LEFT])
+        context.player.seeAngle -= CAMERA_SENSITIVITY;
+    else if (context.keystate[SDL_SCANCODE_RIGHT])  // `else` because moving camera left and right at the same time makes no sense
+        context.player.seeAngle += CAMERA_SENSITIVITY;
 }
 
 // Checks if player is able to move in a certain direction
