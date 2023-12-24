@@ -14,6 +14,13 @@ static void handleKeyboardState();
 static void pollEvents();
 static void handleMouseMotion();
 static void handlePlayerMovement();
+/**
+ * Check if player is able to move in specified direction
+ * @param direction Direction
+ * @param forward A forward vector (looks in the same way as camera does)
+ * @param right A right vector
+ * @param playerPositionIfMadeMovement A pointer to Vector2d that will store the location of the player if he made the movement
+ */
 static bool isPlayerAbleToMoveInDirection(
     Direction direction, Vector2d forward,
     Vector2d right, Vector2d* playerPositionIfMadeMovement

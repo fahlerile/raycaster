@@ -1,3 +1,5 @@
+#include "DynamicArray/DynamicArray.h"
+#include "Map.h"
 #include "Renderer.h"
 #include "Vector/Vector2.h"
 #include "utils.h"
@@ -34,35 +36,39 @@ static void castHorizontalAndVerticalRaysAndReturnShorter(
     Block* hitBlockH;
     Block* hitBlockV;
 
-    castRay(RayTypeHorizontal, seeAngle, &hitPositionH, &hitBlockH);
-    castRay(RayTypeVertical, seeAngle, &hitPositionV, &hitBlockV);
+    int horizontalRayStatusCode = castRay(RayTypeHorizontal, seeAngle, &hitPositionH, &hitBlockH);
+    int verticalRayStatusCode = castRay(RayTypeVertical, seeAngle, &hitPositionV, &hitBlockV);
     double lengthH = EUCLIDEAN_DISTANCE_VECTOR2D(context.player.position, hitPositionH);
     double lengthV = EUCLIDEAN_DISTANCE_VECTOR2D(context.player.position, hitPositionV);
 
-    if (lengthH <= lengthV)
+    if ((lengthH <= lengthV && horizontalRayStatusCode == 0) ||
+        (horizontalRayStatusCode == 0 && verticalRayStatusCode != 0))
     {
-        *length = lengthH * cos(fabs(context.player.seeAngle - seeAngle));  // fisheye fix
+        *length = lengthH * cos(fabs(context.player.seeAngle - seeAngle));
         *hitPosition = hitPositionH;
         *type = RayTypeHorizontal;
         *hitBlock = hitBlockH;
     }
-    else  // lengthH > lengthV
+    else if ((lengthV < lengthH && verticalRayStatusCode == 0) ||
+             (verticalRayStatusCode == 0 && horizontalRayStatusCode != 0))
     {
-        *length = lengthV * cos(fabs(context.player.seeAngle - seeAngle));  // fisheye fix
+        *length = lengthV * cos(fabs(context.player.seeAngle - seeAngle));
         *hitPosition = hitPositionV;
         *type = RayTypeVertical;
         *hitBlock = hitBlockV;
     }
+    else
+        LOGE("castHorizontalAndVerticalRaysAndReturnShorter: impossible condition occurred!\n");
 }
 
-static void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBlock)
+static int castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block** hitBlock)
 {
     if (type != RayTypeHorizontal && type != RayTypeVertical)
     {
         LOGE("castRay: Unknown RayType = %i\n", type);
         *hitPosition = (Vector2d) {0, 0};
         *hitBlock = NULL;
-        return;
+        return -1;
     }
 
     bool angleFacingNegY = IS_ANGLE_IN_QUADRANT(seeAngle, 3) || IS_ANGLE_IN_QUADRANT(seeAngle, 4);
@@ -76,7 +82,7 @@ static void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block*
         &delta, &rayPosition
     );
     
-    Block* block;
+    Block* block = NULL;
     while (
         0 < rayPosition.x && rayPosition.x < context.map->dimensions.x &&  // not OOB
         0 < rayPosition.y && rayPosition.y < context.map->dimensions.y &&
@@ -101,14 +107,16 @@ static void castRay(RayType type, double seeAngle, Vector2d* hitPosition, Block*
         }
     }
 
+    if (block == NULL)  // if ray was already OOB at the start of the loop
+        return -1;
     *hitPosition = rayPosition;
     *hitBlock = block;
-    return;
+    return 0;
 }
 
 static void calculateDeltaAndSnapRayToGrid(
     RayType type, double seeAngle,
-    double angleFacingNegX, double angleFacingNegY,
+    bool angleFacingNegX, bool angleFacingNegY,
     double* delta, Vector2d* rayPosition
 )
 {

@@ -1,5 +1,3 @@
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_keycode.h>
 #define SDL_MAIN_HANDLED
 #define STB_IMAGE_IMPLEMENTATION
 

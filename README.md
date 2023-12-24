@@ -2,6 +2,40 @@
 
 A raycaster engine written in C. End goal - a simple game.
 
+## `.map` files
+
+Uses 0-based indexing everywhere. Consists of 4 sections:
+- Width, height, player's default values
+- Textures
+    - `path/to/texture`
+- Blocks
+    - `BlockTypeAir`
+        - `0` (SHOULD BE IN EVERY MAP AS FIRST BLOCK!)
+    - `BlockTypeColored`
+        - `1 red green blue`
+    - `BlockTypeTextured`
+        - `2 texture_index`
+- Map
+    - Comma-separated indices of blocks
+
+Example `.map` file:
+```
+MAP
+map_width map_height player_default_x player_default_y player_default_see_angle
+#textures
+path/to/texture_0
+...
+path/to/texture_n
+#blocks
+0
+1 red green blue
+2 texture_index
+#map
+block_index,block_index,...,
+...
+...
+```
+
 ## TODO
 - [x] Add player and map construction
 - [x] Implement `readMapFromFile` (`.map` file parser)
@@ -18,7 +52,7 @@ A raycaster engine written in C. End goal - a simple game.
     - [x] Incorrect rendering of textures if too close
     - [x] Fix visual bug when too small angles
     - [x] Random segfaults (I guess I fixed them)
-- [ ] Add documents
+- [x] Add documentation
 - [ ] Textured floor/ceiling
 - [ ] Entities
 

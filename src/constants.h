@@ -3,6 +3,7 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+// Reverse proportionality constant for wall rendering
 #define LINE_LENGTH_PROPORTION_CONSTANT 750
 
 #define ROOF_COLOR ((Color) {100, 100, 100, 255})

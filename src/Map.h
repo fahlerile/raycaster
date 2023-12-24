@@ -29,6 +29,11 @@ typedef struct
     DynamicArray* data;  // Block*
 } Map;
 
+/**
+ * @param filename Path to the .map file
+ * @param textures A pointer to uninitialized DynamicArray that will store textures
+ * @param textures A pointer to uninitialized DynamicArray that will store block information
+ */
 Map* newMapFromFile(const char* filename, DynamicArray** textures, DynamicArray** blocks);
 Block* getBlockAtPosition(Map* this, Vector2i position);
 
